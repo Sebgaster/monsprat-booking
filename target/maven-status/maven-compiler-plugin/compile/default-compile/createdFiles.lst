@@ -1,0 +1,5 @@
+com\barberia\model\Turno.class
+com\mycompany\javaweb\resources\JakartaEE11Resource.class
+com\barberia\servlet\HomeServlet.class
+com\barberia\servlet\ReservarTurnoServlet.class
+com\mycompany\javaweb\JakartaRestConfiguration.class

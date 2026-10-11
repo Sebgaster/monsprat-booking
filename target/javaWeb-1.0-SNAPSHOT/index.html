@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monsprat Barber Studio - Turnos</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0d0d0d;
+            color: #f1f1f1;
+            margin: 0;
+            padding: 30px 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .main-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            max-width: 900px;
+            width: 100%;
+            justify-content: center;
+        }
+        .card {
+            background-color: #1a1a1a;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
+            border: 1px solid #2a2a2a;
+            flex: 1 1 400px;
+            max-width: 440px;
+        }
+        .header-logo {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header-logo img {
+            max-width: 130px;
+            height: auto;
+            border-radius: 8px;
+            border: 1px solid #c5a059;
+            padding: 4px;
+            background: #0d0d0d;
+        }
+        h2 {
+            text-align: center;
+            color: #c5a059;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-weight: 300;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 10px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #aaa;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+            background-color: #252525;
+            color: #fff;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #c5a059;
+        }
+        button {
+            width: 100%;
+            padding: 14px;
+            background-color: #c5a059;
+            border: none;
+            border-radius: 6px;
+            color: #0d0d0d;
+            font-weight: bold;
+            font-size: 15px;
+            cursor: pointer;
+            margin-top: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background-color: #a38241;
+        }
+        .filter-box {
+            background: #222;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            border: 1px solid #333;
+        }
+        .schedule-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            max-height: 280px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .time-slot {
+            background: #252525;
+            padding: 8px;
+            border-radius: 6px;
+            text-align: center;
+            border: 1px solid #333;
+            font-size: 13px;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-top: 3px;
+            background-color: #1e3a29;
+            color: #2ecc71;
+        }
+        .note {
+            font-size: 12px;
+            color: #888;
+            margin-top: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-wrapper">
+    <!-- FORMULARIO DE RESERVA -->
+    <div class="card">
+        <div class="header-logo">
+            <img src="images/logo.jpg" alt="Monsprat Barber Studio Logo">
+        </div>
+
+        <h2>Reserva de Turno</h2>
+
+        <form action="ReservarTurnoServlet" method="POST">
+            <div class="form-group">
+                <label for="cliente">Nombre Completo</label>
+                <input type="text" id="cliente" name="cliente" required placeholder="Ej. Carlos Mendoza">
+            </div>
+
+            <div class="form-group">
+                <label for="servicio">Servicio</label>
+                <select id="servicio" name="servicio" required>
+                    <option value="Corte de Cabello">Corte de Cabello (30 min)</option>
+                    <option value="Arreglo de Barba">Arreglo de Barba (30 min)</option>
+                    <option value="Corte + Barba">Corte + Barba (30 min)</option>
+                    <option value="Tintura / Color">Tintura / Color (30 min)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="fecha">Fecha</label>
+                <input type="date" id="fecha" name="fecha" required>
+            </div>
+
+            <div class="form-group">
+                <label for="hora">Selecciona Franja Horaria (30 min)</label>
+                <select id="hora" name="hora" required>
+                    <option value="">-- Selecciona un horario --</option>
+                    <option value="09:00">09:00 AM</option>
+                    <option value="09:30">09:30 AM</option>
+                    <option value="10:00">10:00 AM</option>
+                    <option value="10:30">10:30 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="11:30">11:30 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="12:30">12:30 PM</option>
+                    <option value="13:00">01:00 PM</option>
+                    <option value="13:30">01:30 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="14:30">02:30 PM</option>
+                    <option value="15:00">03:00 PM</option>
+                    <option value="15:30">03:30 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="16:30">04:30 PM</option>
+                    <option value="17:00">05:00 PM</option>
+                    <option value="17:30">05:30 PM</option>
+                    <option value="18:00">06:00 PM</option>
+                    <option value="18:30">06:30 PM</option>
+                    <option value="19:00">07:00 PM</option>
+                    <option value="19:30">07:30 PM</option>
+                </select>
+            </div>
+
+            <button type="submit">Confirmar Reserva</button>
+        </form>
+    </div>
+
+    <!-- PANEL DE FRANJAS DISPONIBLES -->
+    <div class="card">
+        <h2>Disponibilidad en Tiempo Real</h2>
+
+        <!-- FILTRO DE FECHA COLOCADO AQUÍ -->
+        <form method="GET" action="HomeServlet" class="filter-box">
+            <label for="fechaFiltro">Ver disponibilidad para la fecha:</label>
+            <input type="date" id="fechaFiltro" name="fechaFiltro" onchange="this.form.submit()">
+        </form>
+
+        <div class="schedule-grid">
+            <div class="time-slot"><div>09:00 AM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>09:30 AM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>10:00 AM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>10:30 AM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>11:00 AM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>11:30 AM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>12:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>12:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>01:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>01:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>02:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>02:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>03:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>03:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>04:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>04:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>05:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>05:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>06:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>06:30 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>07:00 PM</div><span class="status-badge">30 min</span></div>
+            <div class="time-slot"><div>07:30 PM</div><span class="status-badge">30 min</span></div>
+        </div>
+
+        <p class="note">
+            * Cada opción asigna un bloque exclusivo de 30 minutos.
+        </p>
+    </div>
+</div>
+
+</body>
+</html>
