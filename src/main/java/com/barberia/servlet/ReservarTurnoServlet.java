@@ -59,12 +59,10 @@ public class ReservarTurnoServlet extends HttpServlet {
             LocalDate maxFecha = hoy.plusDays(15);
             LocalDate fechaReserva = LocalDate.parse(fecha);
 
-            // Validar si está fuera del rango permitido de 15 días
             if (fechaReserva.isBefore(hoy) || fechaReserva.isAfter(maxFecha)) {
                 esFechaInvalida = true;
             }
 
-            // Validar si es Domingo o si la fecha coincide con un Festivo de Colombia
             if (fechaReserva.getDayOfWeek() == DayOfWeek.SUNDAY || FESTIVOS_COLOMBIA.contains(fecha)) {
                 esDomingoOFestivo = true;
             }
@@ -132,18 +130,20 @@ public class ReservarTurnoServlet extends HttpServlet {
                 listaTurnos.add(nuevoTurno);
                 context.setAttribute("listaTurnos", listaTurnos);
 
-                // Limpiar el número ingresado por el cliente para dejar solo dígitos
+                // Limpiar teléfono y asegurar indicativo de Colombia (57)
                 String telefonoLimpio = (telefono != null) ? telefono.replaceAll("[^0-9]", "") : "";
+                if (telefonoLimpio.length() == 10) {
+                    telefonoLimpio = "57" + telefonoLimpio;
+                }
 
-                // Formatear mensaje del resumen
-                String mensajeTexto = "✂️ *Resumen de Reserva - Monsprat Barber Studio*\n\n"
+                // Formatear mensaje para WhatsApp
+                String mensajeTexto = "💈 *Confirmación de Reserva - Monsprat Barber Studio*\n\n"
                         + "Hola " + cliente + ", aquí tienes el comprobante de tu cita:\n"
                         + "📅 *Fecha:* " + fecha + "\n"
-                        + "⏰ *Hora:* " + hora + " hrs\n"
-                        + "💈 *Servicio(s):* " + servicio + "\n\n"
-                        + "¡Nos vemos pronto!";
+                        + "⏰ *Hora:* " + hora + "\n"
+                        + "✂️ *Servicio:* " + servicio + "\n\n"
+                        + "¡Te esperamos!";
 
-                // Generar enlace a la cuenta del cliente utilizando su número
                 String urlWhatsAppCliente = "https://wa.me/" + telefonoLimpio + "?text=" + URLEncoder.encode(mensajeTexto, "UTF-8");
 
                 out.println("<h2>Reserva Confirmada</h2>");
@@ -151,13 +151,13 @@ public class ReservarTurnoServlet extends HttpServlet {
 
                 out.println("<div class='info-group'>");
                 out.println("<p><strong>Cliente:</strong> " + cliente + "</p>");
-                out.println("<p><strong>Teléfono:</strong> " + telefono + "</p>");
-                out.println("<p><strong>Servicios:</strong> " + servicio + "</p>");
+                out.println("<p><strong>WhatsApp:</strong> " + telefono + "</p>");
+                out.println("<p><strong>Servicio:</strong> " + servicio + "</p>");
                 out.println("<p><strong>Fecha:</strong> " + fecha + "</p>");
-                out.println("<p><strong>Hora:</strong> " + hora + " hrs</p>");
+                out.println("<p><strong>Hora:</strong> " + hora + "</p>");
                 out.println("</div>");
 
-                out.println("<a href='" + urlWhatsAppCliente + "' target='_blank' class='btn btn-wsp'>📱 Abrir mi comprobante en WhatsApp</a>");
+                out.println("<a href='" + urlWhatsAppCliente + "' target='_blank' class='btn btn-wsp'>📱 Recibir comprobante en WhatsApp</a>");
                 out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Volver al Inicio</a>");
             }
 
