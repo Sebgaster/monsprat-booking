@@ -83,13 +83,13 @@ public class HomeServlet extends HttpServlet {
             out.println("button { width: 100%; padding: 14px; background-color: #c5a059; border: none; border-radius: 6px; color: #0d0d0d; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s ease; }");
             out.println("button:hover { background-color: #a38241; }");
             out.println(".filter-box { background: #222; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; }");
-            out.println(".schedule-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 15px; max-height: 280px; overflow-y: auto; padding-right: 5px; }");
-            out.println(".time-slot { background: #252525; padding: 10px; border-radius: 6px; text-align: center; border: 1px solid #333; font-size: 13px; cursor: pointer; transition: all 0.2s ease; }");
+            out.println(".schedule-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; max-height: 280px; overflow-y: auto; padding-right: 5px; }");
+            out.println(".time-slot { background: #252525; padding: 12px; border-radius: 6px; text-align: center; border: 1px solid #333; font-size: 14px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }");
             out.println(".time-slot:hover { border-color: #c5a059; background: #2e2e2e; }");
             out.println(".time-slot.selected { background: #c5a059; color: #0d0d0d; border-color: #ffffff; font-weight: bold; }");
             out.println(".time-slot.selected .status-badge { background-color: #0d0d0d; color: #c5a059; }");
             out.println(".time-slot.disabled { background-color: #1a1a1a; border-color: #333; color: #555; cursor: not-allowed; opacity: 0.6; }");
-            out.println(".status-badge { display: inline-block; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; margin-top: 3px; background-color: #1e3a29; color: #2ecc71; }");
+            out.println(".status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background-color: #1e3a29; color: #2ecc71; }");
             out.println(".status-badge.occupied { background-color: #3a1e1e; color: #e74c3c; }");
             out.println(".note { font-size: 12px; color: #888; margin-top: 15px; text-align: center; }");
             out.println("</style>");
@@ -117,10 +117,10 @@ public class HomeServlet extends HttpServlet {
             out.println("<div class='form-group'>");
             out.println("<label for='servicio'>Servicio</label>");
             out.println("<select id='servicio' name='servicio' required>");
-            out.println("<option value='Corte de Cabello'>Corte de Cabello (60 min)</option>");
-            out.println("<option value='Arreglo de Barba'>Arreglo de Barba (60 min)</option>");
-            out.println("<option value='Corte + Barba'>Corte + Barba (60 min)</option>");
-            out.println("<option value='Tintura / Color'>Tintura / Color (60 min)</option>");
+            out.println("<option value='Corte de Cabello'>Corte de Cabello (1 hora)</option>");
+            out.println("<option value='Arreglo de Barba'>Arreglo de Barba (1 hora)</option>");
+            out.println("<option value='Corte + Barba'>Corte + Barba (1 hora)</option>");
+            out.println("<option value='Tintura / Color'>Tintura / Color (1 hora)</option>");
             out.println("</select>");
             out.println("</div>");
 
@@ -139,23 +139,23 @@ public class HomeServlet extends HttpServlet {
             out.println("<input type='text' id='fechaFiltroInput' value='" + fechaFiltro + "' readonly>");
             out.println("</div>");
 
-            out.println("<label>Selecciona tu horario:</label>");
+            out.println("<label>Selecciona tu franja horaria:</label>");
             out.println("<div class='schedule-grid'>");
 
             for (String h : horasBase) {
                 boolean ocupada = horasOcupadas.contains(h);
-                String hora12 = formatearHora12(h);
+                String rangoHora = formatearRangoHora(h);
 
                 if (ocupada) {
-                    out.println("<div class='time-slot disabled'><div>" + hora12 + "</div><span class='status-badge occupied'>Ocupado</span></div>");
+                    out.println("<div class='time-slot disabled'><div>" + rangoHora + "</div><span class='status-badge occupied'>Ocupado</span></div>");
                 } else {
-                    out.println("<div class='time-slot' data-time='" + h + "'><div>" + hora12 + "</div><span class='status-badge'>60 min</span></div>");
+                    out.println("<div class='time-slot' data-time='" + h + "'><div>" + rangoHora + "</div><span class='status-badge'>Disponible</span></div>");
                 }
             }
 
             out.println("</div>");
             out.println("<button type='submit'>Confirmar Reserva</button>");
-            out.println("<p class='note'>* Selecciona una franja horaria para habilitar la confirmación.</p>");
+            out.println("<p class='note'>* Selecciona un bloque de horario disponible para confirmar.</p>");
             out.println("</div>");
 
             out.println("</form>");
@@ -201,18 +201,18 @@ public class HomeServlet extends HttpServlet {
         }
     }
 
-    private String formatearHora12(String hora24) {
+    private String formatearRangoHora(String hora24) {
         switch (hora24) {
-            case "10:00": return "10:00 AM";
-            case "11:00": return "11:00 AM";
-            case "12:00": return "12:00 PM";
-            case "13:00": return "01:00 PM";
-            case "14:00": return "02:00 PM";
-            case "15:00": return "03:00 PM";
-            case "16:00": return "04:00 PM";
-            case "17:00": return "05:00 PM";
-            case "18:00": return "06:00 PM";
-            case "19:00": return "07:00 PM";
+            case "10:00": return "10:00 AM - 11:00 AM";
+            case "11:00": return "11:00 AM - 12:00 PM";
+            case "12:00": return "12:00 PM - 01:00 PM";
+            case "13:00": return "01:00 PM - 02:00 PM";
+            case "14:00": return "02:00 PM - 03:00 PM";
+            case "15:00": return "03:00 PM - 04:00 PM";
+            case "16:00": return "04:00 PM - 05:00 PM";
+            case "17:00": return "05:00 PM - 06:00 PM";
+            case "18:00": return "06:00 PM - 07:00 PM";
+            case "19:00": return "07:00 PM - 08:00 PM";
             default: return hora24;
         }
     }

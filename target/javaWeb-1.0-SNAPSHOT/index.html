@@ -117,7 +117,7 @@
         }
         .schedule-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: 1fr;
             gap: 10px;
             margin-top: 15px;
             max-height: 280px;
@@ -126,13 +126,16 @@
         }
         .time-slot {
             background: #252525;
-            padding: 10px;
+            padding: 12px;
             border-radius: 6px;
             text-align: center;
             border: 1px solid #333;
-            font-size: 13px;
+            font-size: 14px;
             cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .time-slot:hover {
             border-color: #c5a059;
@@ -150,11 +153,10 @@
         }
         .status-badge {
             display: inline-block;
-            padding: 2px 6px;
+            padding: 4px 8px;
             border-radius: 4px;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: bold;
-            margin-top: 3px;
             background-color: #1e3a29;
             color: #2ecc71;
         }
@@ -169,10 +171,10 @@
 <body>
 
 <form action="ReservarTurnoServlet" method="POST" id="bookingForm" class="main-wrapper">
-    <!-- Campo oculto para enviar la hora elegida desde la cuadrícula al backend -->
+    <!-- Campo oculto para enviar la hora elegida al backend -->
     <input type="hidden" id="hora" name="hora" required>
 
-    <!-- FORMULARIO DE RESERVA (SIN EL CAMPOS DE HORA) -->
+    <!-- FORMULARIO DE RESERVA -->
     <div class="card">
         <div class="header-logo">
             <img src="images/logo.jpg" alt="Monsprat Barber Studio Logo">
@@ -188,10 +190,10 @@
         <div class="form-group">
             <label for="servicio">Servicio</label>
             <select id="servicio" name="servicio" required>
-                <option value="Corte de Cabello">Corte de Cabello (60 min)</option>
-                <option value="Arreglo de Barba">Arreglo de Barba (60 min)</option>
-                <option value="Corte + Barba">Corte + Barba (60 min)</option>
-                <option value="Tintura / Color">Tintura / Color (60 min)</option>
+                <option value="Corte de Cabello">Corte de Cabello (1 hora)</option>
+                <option value="Arreglo de Barba">Arreglo de Barba (1 hora)</option>
+                <option value="Corte + Barba">Corte + Barba (1 hora)</option>
+                <option value="Tintura / Color">Tintura / Color (1 hora)</option>
             </select>
         </div>
 
@@ -210,24 +212,24 @@
             <input type="text" id="fechaFiltro" name="fechaFiltro" placeholder="Selecciona una fecha a la izquierda" readonly>
         </div>
 
-        <label>Selecciona tu horario:</label>
+        <label>Selecciona tu franja horaria:</label>
         <div class="schedule-grid" id="scheduleGrid">
-            <div class="time-slot" data-time="10:00"><div>10:00 AM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="11:00"><div>11:00 AM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="12:00"><div>12:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="13:00"><div>01:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="14:00"><div>02:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="15:00"><div>03:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="16:00"><div>04:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="17:00"><div>05:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="18:00"><div>06:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot" data-time="19:00"><div>07:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="10:00"><div>10:00 AM - 11:00 AM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="11:00"><div>11:00 AM - 12:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="12:00"><div>12:00 PM - 01:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="13:00"><div>01:00 PM - 02:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="14:00"><div>02:00 PM - 03:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="15:00"><div>03:00 PM - 04:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="16:00"><div>04:00 PM - 05:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="17:00"><div>05:00 PM - 06:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="18:00"><div>06:00 PM - 07:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="19:00"><div>07:00 PM - 08:00 PM</div><span class="status-badge">Disponible</span></div>
         </div>
 
         <button type="submit">Confirmar Reserva</button>
 
         <p class="note">
-            * Selecciona una franja horaria para habilitar la confirmación.
+            * Selecciona un bloque de horario disponible para confirmar.
         </p>
     </div>
 </form>
