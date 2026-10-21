@@ -129,13 +129,17 @@ public class AdminServlet extends HttpServlet {
                 if (t.getFecha().equals(fechaFiltro)) {
                     contador++;
                     String telefonoLimpio = t.getTelefono() != null ? t.getTelefono().replaceAll("[^0-9]", "") : "";
-                    
+                    if (telefonoLimpio.length() == 10) {
+                        telefonoLimpio = "57" + telefonoLimpio;
+                    }
+
+                    String rangoHora = formatearRangoHora(t.getHora());
+
                     out.println("<tr>");
-                    out.println("<td><span class='badge-hora'>" + t.getHora() + "</span></td>");
+                    out.println("<td><span class='badge-hora'>" + rangoHora + "</span></td>");
                     out.println("<td><strong>" + t.getCliente() + "</strong></td>");
                     out.println("<td>");
-                    out.println("<a href='https://wa.me/" + telefonoLimpio + "' target='_blank' class='btn-wa'>📲 " + t.getTelefono() + "</a><br>");
-                    out.println("<small style='color:#888;'>" + t.getEmail() + "</small>");
+                    out.println("<a href='https://wa.me/" + telefonoLimpio + "' target='_blank' class='btn-wa'>📲 " + t.getTelefono() + "</a>");
                     out.println("</td>");
                     out.println("<td>" + t.getServicio() + "</td>");
                     out.println("<td>");
@@ -159,6 +163,23 @@ public class AdminServlet extends HttpServlet {
             out.println("</div>");
             out.println("</body>");
             out.println("</html>");
+        }
+    }
+
+    private String formatearRangoHora(String hora24) {
+        if (hora24 == null) return "";
+        switch (hora24) {
+            case "10:00": return "10:00 AM - 11:00 AM";
+            case "11:00": return "11:00 AM - 12:00 PM";
+            case "12:00": return "12:00 PM - 01:00 PM";
+            case "13:00": return "01:00 PM - 02:00 PM";
+            case "14:00": return "02:00 PM - 03:00 PM";
+            case "15:00": return "03:00 PM - 04:00 PM";
+            case "16:00": return "16:00 PM - 05:00 PM";
+            case "17:00": return "05:00 PM - 06:00 PM";
+            case "18:00": return "06:00 PM - 07:00 PM";
+            case "19:00": return "07:00 PM - 08:00 PM";
+            default: return hora24;
         }
     }
 }

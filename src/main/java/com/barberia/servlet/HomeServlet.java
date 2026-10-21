@@ -71,8 +71,8 @@ public class HomeServlet extends HttpServlet {
             out.println("<style>");
             out.println("* { box-sizing: border-box; }");
             out.println("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0d0d; color: #f1f1f1; margin: 0; padding: 30px 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }");
-            out.println(".main-wrapper { display: flex; flex-wrap: wrap; gap: 30px; max-width: 900px; width: 100%; justify-content: center; }");
-            out.println(".card { background-color: #1a1a1a; padding: 30px; border-radius: 12px; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); border: 1px solid #2a2a2a; flex: 1 1 400px; max-width: 440px; }");
+            out.println(".main-wrapper { display: flex; flex-wrap: wrap; gap: 30px; max-width: 900px; width: 100%; justify-content: center; position: relative; }");
+            out.println(".card { background-color: #1a1a1a; padding: 30px; border-radius: 12px; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); border: 1px solid #2a2a2a; flex: 1 1 400px; max-width: 440px; position: relative; }");
             out.println(".header-logo { text-align: center; margin-bottom: 20px; }");
             out.println(".header-logo img { max-width: 130px; height: auto; border-radius: 8px; border: 1px solid #c5a059; padding: 4px; background: #0d0d0d; }");
             out.println("h2 { text-align: center; color: #c5a059; margin-top: 0; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; border-bottom: 1px solid #2a2a2a; padding-bottom: 10px; }");
@@ -94,6 +94,8 @@ public class HomeServlet extends HttpServlet {
             out.println(".status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background-color: #1e3a29; color: #2ecc71; }");
             out.println(".status-badge.occupied { background-color: #3a1e1e; color: #e74c3c; }");
             out.println(".note { font-size: 12px; color: #888; margin-top: 15px; text-align: center; }");
+            out.println(".btn-admin-access { position: absolute; top: 12px; right: 15px; color: #888; font-size: 11px; text-decoration: none; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; transition: all 0.3s ease; }");
+            out.println(".btn-admin-access:hover { color: #c5a059; border-color: #c5a059; background: #222; }");
             out.println("</style>");
             out.println("</head>");
             out.println("<body>");
@@ -103,6 +105,10 @@ public class HomeServlet extends HttpServlet {
 
             // PRIMERA TARJETA: FORMULARIO
             out.println("<div class='card'>");
+            
+            // Botón de acceso al Panel de Administración
+            out.println("<a href='AdminServlet' class='btn-admin-access'>⚙️ Admin</a>");
+
             out.println("<div class='header-logo'><img src='images/logo.jpg' alt='Monsprat Barber Studio Logo'></div>");
             out.println("<h2>Reserva de Turno</h2>");
 
@@ -111,7 +117,6 @@ public class HomeServlet extends HttpServlet {
             out.println("<input type='text' id='cliente' name='cliente' required placeholder='Ej. Carlos Mendoza'>");
             out.println("</div>");
 
-            // CAMPO DE WHATSAPP / TELÉFONO
             out.println("<div class='form-group'>");
             out.println("<label for='telefono'>Número de WhatsApp</label>");
             out.println("<input type='tel' id='telefono' name='telefono' required placeholder='Ej. 3001234567'>");
@@ -152,7 +157,7 @@ public class HomeServlet extends HttpServlet {
             out.println("</div>");
             out.println("</div>");
 
-            // SEGUNDA TARJETA: DISPONIBILIDAD Y BOTÓN FINAL
+            // SEGUNDA TARJETA: DISPONIBILIDAD
             out.println("<div class='card'>");
             out.println("<h2>Disponibilidad en Tiempo Real</h2>");
 
