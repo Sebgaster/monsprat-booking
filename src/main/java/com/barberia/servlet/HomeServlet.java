@@ -80,6 +80,8 @@ public class HomeServlet extends HttpServlet {
             out.println("label { display: block; margin-bottom: 6px; font-size: 13px; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }");
             out.println("input, select { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 6px; background-color: #252525; color: #fff; font-size: 14px; transition: border 0.3s; }");
             out.println("input:focus, select:focus { outline: none; border-color: #c5a059; }");
+            out.println("optgroup { color: #c5a059; font-style: normal; font-weight: bold; background-color: #1a1a1a; }");
+            out.println("option { color: #fff; background-color: #252525; }");
             out.println("button { width: 100%; padding: 14px; background-color: #c5a059; border: none; border-radius: 6px; color: #0d0d0d; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s ease; }");
             out.println("button:hover { background-color: #a38241; }");
             out.println(".filter-box { background: #222; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; }");
@@ -99,7 +101,6 @@ public class HomeServlet extends HttpServlet {
             out.println("<form action='ReservarTurnoServlet' method='POST' id='bookingForm' class='main-wrapper'>");
             out.println("<input type='hidden' id='hora' name='hora' required>");
 
-            // PRIMERA TARJETA: FORMULARIO
             out.println("<div class='card'>");
             out.println("<div class='header-logo'><img src='images/logo.jpg' alt='Monsprat Barber Studio Logo'></div>");
             out.println("<h2>Reserva de Turno</h2>");
@@ -110,17 +111,31 @@ public class HomeServlet extends HttpServlet {
             out.println("</div>");
 
             out.println("<div class='form-group'>");
-            out.println("<label for='telefono'>Número de Teléfono</label>");
-            out.println("<input type='tel' id='telefono' name='telefono' required placeholder='Ej. 3001234567'>");
-            out.println("</div>");
-
-            out.println("<div class='form-group'>");
             out.println("<label for='servicio'>Servicio</label>");
             out.println("<select id='servicio' name='servicio' required>");
-            out.println("<option value='Corte de Cabello'>Corte de Cabello (1 hora)</option>");
-            out.println("<option value='Arreglo de Barba'>Arreglo de Barba (1 hora)</option>");
-            out.println("<option value='Corte + Barba'>Corte + Barba (1 hora)</option>");
-            out.println("<option value='Tintura / Color'>Tintura / Color (1 hora)</option>");
+            out.println("<option value='' disabled selected>-- Selecciona un servicio --</option>");
+            
+            out.println("<optgroup label='Cortes y Barba'>");
+            out.println("<option value='Corte de Cabello'>Corte de Cabello</option>");
+            out.println("<option value='Arreglo de Barba'>Arreglo de Barba</option>");
+            out.println("<option value='Corte + Barba'>Corte + Barba</option>");
+            out.println("<option value='Pigmentación de Barba'>Pigmentación de Barba</option>");
+            out.println("</optgroup>");
+            
+            out.println("<optgroup label='Color'>");
+            out.println("<option value='Tintura / Color'>Tintura / Color</option>");
+            out.println("</optgroup>");
+            
+            out.println("<optgroup label='Facial y Depilación'>");
+            out.println("<option value='Arreglo de Cejas'>Arreglo de Cejas</option>");
+            out.println("<option value='Depilación de Nariz'>Depilación de Nariz</option>");
+            out.println("<option value='Depilación de Oídos'>Depilación de Oídos</option>");
+            out.println("<option value='Mascarilla Puntos Negros'>Mascarilla Puntos Negros</option>");
+            out.println("<option value='Mascarilla de Colágeno'>Mascarilla de Colágeno</option>");
+            out.println("<option value='Exfoliación Facial'>Exfoliación Facial</option>");
+            out.println("<option value='Mascarilla Oro'>Mascarilla Oro</option>");
+            out.println("</optgroup>");
+
             out.println("</select>");
             out.println("</div>");
 
@@ -130,7 +145,6 @@ public class HomeServlet extends HttpServlet {
             out.println("</div>");
             out.println("</div>");
 
-            // SEGUNDA TARJETA: DISPONIBILIDAD Y BOTÓN FINAL
             out.println("<div class='card'>");
             out.println("<h2>Disponibilidad en Tiempo Real</h2>");
 

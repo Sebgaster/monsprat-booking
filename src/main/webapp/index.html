@@ -179,10 +179,8 @@
 <body>
 
 <form action="ReservarTurnoServlet" method="POST" id="bookingForm" class="main-wrapper">
-    <!-- Campo oculto para enviar la hora elegida al backend -->
     <input type="hidden" id="hora" name="hora" required>
 
-    <!-- FORMULARIO DE RESERVA -->
     <div class="card">
         <div class="header-logo">
             <img src="images/logo.jpg" alt="Monsprat Barber Studio Logo">
@@ -229,7 +227,6 @@
         </div>
     </div>
 
-    <!-- PANEL DE FRANJAS DISPONIBLES Y BOTÓN FINAL DE CONFIRMACIÓN -->
     <div class="card">
         <h2>Disponibilidad en Tiempo Real</h2>
 
@@ -260,7 +257,6 @@
     </div>
 </form>
 
-<!-- Scripts de Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
@@ -299,7 +295,6 @@
 
     flatpickr("#fecha", configFlatpickr);
 
-    // Asignación de hora mediante clic en los cuadros de franja horaria
     timeSlots.forEach(slot => {
         slot.addEventListener("click", function() {
             timeSlots.forEach(s => s.classList.remove("selected"));
@@ -308,7 +303,6 @@
         });
     });
 
-    // Validación al enviar el formulario
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
         if (!inputFecha.value) {
             alert("Por favor, selecciona una fecha.");
