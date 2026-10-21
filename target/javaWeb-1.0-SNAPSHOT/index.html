@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monsprat Barber Studio - Turnos</title>
+    
+    <!-- Flatpickr CSS (Estilos del Calendario) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css">
+
     <style>
         * {
             box-sizing: border-box;
@@ -165,20 +170,117 @@
             <div class="form-group">
                 <label for="servicio">Servicio</label>
                 <select id="servicio" name="servicio" required>
-                    <option value="Corte de Cabello">Corte de Cabello (30 min)</option>
-                    <option value="Arreglo de Barba">Arreglo de Barba (30 min)</option>
-                    <option value="Corte + Barba">Corte + Barba (30 min)</option>
-                    <option value="Tintura / Color">Tintura / Color (30 min)</option>
+                    <option value="Corte de Cabello">Corte de Cabello (60 min)</option>
+                    <option value="Arreglo de Barba">Arreglo de Barba (60 min)</option>
+                    <option value="Corte + Barba">Corte + Barba (60 min)</option>
+                    <option value="Tintura / Color">Tintura / Color (60 min)</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="fecha">Fecha</label>
-                <input type="date" id="fecha" name="fecha" required>
+                <input type="text" id="fecha" name="fecha" required placeholder="Selecciona una fecha disponible">
             </div>
 
             <div class="form-group">
-                <label for="hora">Selecciona Franja Horaria (30 min)</label>
+                <label for="hora">Selecciona Franja Horaria (1 Hora)</label>
                 <select id="hora" name="hora" required>
                     <option value="">-- Selecciona un horario --</option>
-                    <option value="09:00">09:
+                    <option value="10:00">10:00 AM</option>
+                    <option value="11:00">11:00 AM</option>
+                    <option value="12:00">12:00 PM</option>
+                    <option value="13:00">01:00 PM</option>
+                    <option value="14:00">02:00 PM</option>
+                    <option value="15:00">03:00 PM</option>
+                    <option value="16:00">04:00 PM</option>
+                    <option value="17:00">05:00 PM</option>
+                    <option value="18:00">06:00 PM</option>
+                    <option value="19:00">07:00 PM</option>
+                </select>
+            </div>
+
+            <button type="submit">Confirmar Reserva</button>
+        </form>
+    </div>
+
+    <!-- PANEL DE FRANJAS DISPONIBLES -->
+    <div class="card">
+        <h2>Disponibilidad en Tiempo Real</h2>
+
+        <form method="GET" action="HomeServlet" id="formFiltro" class="filter-box">
+            <label for="fechaFiltro">Ver disponibilidad para la fecha:</label>
+            <input type="text" id="fechaFiltro" name="fechaFiltro" placeholder="Selecciona una fecha">
+        </form>
+
+        <div class="schedule-grid">
+            <div class="time-slot"><div>10:00 AM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>11:00 AM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>12:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>01:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>02:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>03:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>04:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>05:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>06:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot"><div>07:00 PM</div><span class="status-badge">60 min</span></div>
+        </div>
+
+        <p class="note">
+            * Cada opción asigna un bloque exclusivo de 60 minutos.
+        </p>
+    </div>
+</div>
+
+<!-- Scripts de Flatpickr e Idioma Español -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+
+<script>
+    // Lista de festivos oficiales de Colombia para 2026
+    const festivosColombia = [
+        "2026-01-01", "2026-01-12", "2026-03-23", "2026-04-02", "2026-04-03", 
+        "2026-05-01", "2026-05-18", "2026-06-08", "2026-06-15", "2026-06-29", 
+        "2026-07-20", "2026-08-07", "2026-08-17", "2026-10-12", "2026-11-02", 
+        "2026-11-16", "2026-12-08", "2026-12-25"
+    ];
+
+    // Configuración para inhabilitar Domingos y Festivos evaluando la fecha local
+    const configFlatpickr = {
+        locale: "es",
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        maxDate: new Date().fp_incr(15), // Máximo 15 días desde hoy
+        disable: [
+            function(date) {
+                // Evaluamos el día de la semana según la fecha local
+                const esDomingo = (date.getDay() === 0);
+                
+                // Formateamos la fecha a YYYY-MM-DD local para comparar con festivos
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const fechaFormateada = `${year}-${month}-${day}`;
+
+                const esFestivo = festivosColombia.includes(fechaFormateada);
+
+                return esDomingo || esFestivo;
+            }
+        ]
+    };
+
+    // Aplicar al campo del formulario de reserva
+    flatpickr("#fecha", configFlatpickr);
+
+    // Aplicar al campo del filtro de disponibilidad
+    flatpickr("#fechaFiltro", {
+        ...configFlatpickr,
+        onChange: function(selectedDates, dateStr) {
+            if (dateStr) {
+                document.getElementById("formFiltro").submit();
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
