@@ -100,10 +100,10 @@
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: background 0.3s ease;
+            transition: background 0.3s ease, transform 0.1s ease;
         }
         button:hover {
             background-color: #a38241;
@@ -126,11 +126,27 @@
         }
         .time-slot {
             background: #252525;
-            padding: 8px;
+            padding: 10px;
             border-radius: 6px;
             text-align: center;
             border: 1px solid #333;
             font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .time-slot:hover {
+            border-color: #c5a059;
+            background: #2e2e2e;
+        }
+        .time-slot.selected {
+            background: #c5a059;
+            color: #0d0d0d;
+            border-color: #ffffff;
+            font-weight: bold;
+        }
+        .time-slot.selected .status-badge {
+            background-color: #0d0d0d;
+            color: #c5a059;
         }
         .status-badge {
             display: inline-block;
@@ -145,14 +161,17 @@
         .note {
             font-size: 12px;
             color: #888;
-            margin-top: 20px;
+            margin-top: 15px;
             text-align: center;
         }
     </style>
 </head>
 <body>
 
-<div class="main-wrapper">
+<form action="ReservarTurnoServlet" method="POST" id="bookingForm" class="main-wrapper">
+    <!-- Campo oculto para enviar la hora seleccionada al Servlet -->
+    <input type="hidden" id="hora" name="hora" required>
+
     <!-- FORMULARIO DE RESERVA -->
     <div class="card">
         <div class="header-logo">
@@ -161,82 +180,63 @@
 
         <h2>Reserva de Turno</h2>
 
-        <form action="ReservarTurnoServlet" method="POST">
-            <div class="form-group">
-                <label for="cliente">Nombre Completo</label>
-                <input type="text" id="cliente" name="cliente" required placeholder="Ej. Carlos Mendoza">
-            </div>
+        <div class="form-group">
+            <label for="cliente">Nombre Completo</label>
+            <input type="text" id="cliente" name="cliente" required placeholder="Ej. Carlos Mendoza">
+        </div>
 
-            <div class="form-group">
-                <label for="servicio">Servicio</label>
-                <select id="servicio" name="servicio" required>
-                    <option value="Corte de Cabello">Corte de Cabello (60 min)</option>
-                    <option value="Arreglo de Barba">Arreglo de Barba (60 min)</option>
-                    <option value="Corte + Barba">Corte + Barba (60 min)</option>
-                    <option value="Tintura / Color">Tintura / Color (60 min)</option>
-                </select>
-            </div>
+        <div class="form-group">
+            <label for="servicio">Servicio</label>
+            <select id="servicio" name="servicio" required>
+                <option value="Corte de Cabello">Corte de Cabello (60 min)</option>
+                <option value="Arreglo de Barba">Arreglo de Barba (60 min)</option>
+                <option value="Corte + Barba">Corte + Barba (60 min)</option>
+                <option value="Tintura / Color">Tintura / Color (60 min)</option>
+            </select>
+        </div>
 
-            <div class="form-group">
-                <label for="fecha">Fecha</label>
-                <input type="text" id="fecha" name="fecha" required placeholder="Selecciona una fecha disponible">
-            </div>
-
-            <div class="form-group">
-                <label for="hora">Selecciona Franja Horaria (1 Hora)</label>
-                <select id="hora" name="hora" required>
-                    <option value="">-- Selecciona un horario --</option>
-                    <option value="10:00">10:00 AM</option>
-                    <option value="11:00">11:00 AM</option>
-                    <option value="12:00">12:00 PM</option>
-                    <option value="13:00">01:00 PM</option>
-                    <option value="14:00">02:00 PM</option>
-                    <option value="15:00">03:00 PM</option>
-                    <option value="16:00">04:00 PM</option>
-                    <option value="17:00">05:00 PM</option>
-                    <option value="18:00">06:00 PM</option>
-                    <option value="19:00">07:00 PM</option>
-                </select>
-            </div>
-
-            <button type="submit">Confirmar Reserva</button>
-        </form>
+        <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input type="text" id="fecha" name="fecha" required placeholder="Selecciona una fecha disponible">
+        </div>
     </div>
 
     <!-- PANEL DE FRANJAS DISPONIBLES -->
     <div class="card">
         <h2>Disponibilidad en Tiempo Real</h2>
 
-        <form method="GET" action="HomeServlet" id="formFiltro" class="filter-box">
-            <label for="fechaFiltro">Ver disponibilidad para la fecha:</label>
-            <input type="text" id="fechaFiltro" name="fechaFiltro" placeholder="Selecciona una fecha">
-        </form>
-
-        <div class="schedule-grid">
-            <div class="time-slot"><div>10:00 AM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>11:00 AM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>12:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>01:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>02:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>03:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>04:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>05:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>06:00 PM</div><span class="status-badge">60 min</span></div>
-            <div class="time-slot"><div>07:00 PM</div><span class="status-badge">60 min</span></div>
+        <div class="filter-box">
+            <label for="fechaFiltro">Fecha seleccionada:</label>
+            <input type="text" id="fechaFiltro" name="fechaFiltro" placeholder="Selecciona fecha en la izquierda" readonly>
         </div>
 
+        <label>Selecciona una franja horaria:</label>
+        <div class="schedule-grid" id="scheduleGrid">
+            <div class="time-slot" data-time="10:00"><div>10:00 AM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="11:00"><div>11:00 AM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="12:00"><div>12:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="13:00"><div>01:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="14:00"><div>02:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="15:00"><div>03:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="16:00"><div>04:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="17:00"><div>05:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="18:00"><div>06:00 PM</div><span class="status-badge">60 min</span></div>
+            <div class="time-slot" data-time="19:00"><div>07:00 PM</div><span class="status-badge">60 min</span></div>
+        </div>
+
+        <button type="submit">Confirmar Reserva</button>
+
         <p class="note">
-            * Cada opción asigna un bloque exclusivo de 60 minutos.
+            * Selecciona la franja horaria deseada para habilitar el envío de la reserva.
         </p>
     </div>
-</div>
+</form>
 
 <!-- Scripts de Flatpickr e Idioma Español -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
 <script>
-    // Lista de festivos oficiales de Colombia para 2026
     const festivosColombia = [
         "2026-01-01", "2026-01-12", "2026-03-23", "2026-04-02", "2026-04-03", 
         "2026-05-01", "2026-05-18", "2026-06-08", "2026-06-15", "2026-06-29", 
@@ -244,40 +244,53 @@
         "2026-11-16", "2026-12-08", "2026-12-25"
     ];
 
-    // Configuración para inhabilitar Domingos y Festivos evaluando la fecha local
+    const inputFecha = document.getElementById("fecha");
+    const inputFechaFiltro = document.getElementById("fechaFiltro");
+    const inputHora = document.getElementById("hora");
+    const timeSlots = document.querySelectorAll(".time-slot");
+
     const configFlatpickr = {
         locale: "es",
         dateFormat: "Y-m-d",
         minDate: "today",
-        maxDate: new Date().fp_incr(15), // Máximo 15 días desde hoy
+        maxDate: new Date().fp_incr(15),
         disable: [
             function(date) {
-                // Evaluamos el día de la semana según la fecha local
                 const esDomingo = (date.getDay() === 0);
-                
-                // Formateamos la fecha a YYYY-MM-DD local para comparar con festivos
                 const year = date.getFullYear();
                 const month = String(date.getMonth() + 1).padStart(2, '0');
                 const day = String(date.getDate()).padStart(2, '0');
                 const fechaFormateada = `${year}-${month}-${day}`;
-
-                const esFestivo = festivosColombia.includes(fechaFormateada);
-
-                return esDomingo || esFestivo;
+                return esDomingo || festivosColombia.includes(fechaFormateada);
             }
-        ]
+        ],
+        onChange: function(selectedDates, dateStr) {
+            inputFechaFiltro.value = dateStr;
+        }
     };
 
-    // Aplicar al campo del formulario de reserva
     flatpickr("#fecha", configFlatpickr);
 
-    // Aplicar al campo del filtro de disponibilidad
-    flatpickr("#fechaFiltro", {
-        ...configFlatpickr,
-        onChange: function(selectedDates, dateStr) {
-            if (dateStr) {
-                document.getElementById("formFiltro").submit();
-            }
+    // Selección interactiva de franjas horarias
+    timeSlots.forEach(slot => {
+        slot.addEventListener("click", function() {
+            timeSlots.forEach(s => s.classList.remove("selected"));
+            this.classList.add("selected");
+            inputHora.value = this.getAttribute("data-time");
+        });
+    });
+
+    // Validar antes de enviar el formulario
+    document.getElementById("bookingForm").addEventListener("submit", function(e) {
+        if (!inputFecha.value) {
+            alert("Por favor, selecciona una fecha.");
+            e.preventDefault();
+            return;
+        }
+        if (!inputHora.value) {
+            alert("Por favor, selecciona una franja horaria haciendo clic en el cuadro de horario.");
+            e.preventDefault();
+            return;
         }
     });
 </script>
