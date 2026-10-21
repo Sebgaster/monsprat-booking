@@ -1,6 +1,9 @@
 package com.barberia.model;
 
+import java.util.UUID;
+
 public class Turno {
+    private String id;
     private String cliente;
     private String email;
     private String telefono;
@@ -9,15 +12,26 @@ public class Turno {
     private String hora;
 
     public Turno() {
+        this.id = UUID.randomUUID().toString(); // Genera un ID único automático
     }
 
     public Turno(String cliente, String email, String telefono, String servicio, String fecha, String hora) {
+        this.id = UUID.randomUUID().toString();
         this.cliente = cliente;
         this.email = email;
         this.telefono = telefono;
         this.servicio = servicio;
         this.fecha = fecha;
         this.hora = hora;
+    }
+
+    // Getters y Setters
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getCliente() {

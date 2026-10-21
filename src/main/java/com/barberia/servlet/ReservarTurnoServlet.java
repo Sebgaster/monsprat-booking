@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLEncoder;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +29,30 @@ public class ReservarTurnoServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        // Recepción de parámetros del formulario
         String cliente = request.getParameter("cliente");
-        String email = request.getParameter("email");
         String telefono = request.getParameter("telefono");
-        String servicio = request.getParameter("servicio");
+
+        String[] serviciosSeleccionados = request.getParameterValues("servicio");
+        String servicio = (serviciosSeleccionados != null && serviciosSeleccionados.length > 0)
+                ? String.join(", ", serviciosSeleccionados)
+                : "Sin servicio especificado";
+
         String fecha = request.getParameter("fecha");
         String hora = request.getParameter("hora");
+
+        // Validar límite de fecha (Hoy hasta 15 días)
+        boolean esFechaInvalida = false;
+        try {
+            LocalDate hoy = LocalDate.now();
+            LocalDate maxFecha = hoy.plusDays(15);
+            LocalDate fechaReserva = LocalDate.parse(fecha);
+
+            if (fechaReserva.isBefore(hoy) || fechaReserva.isAfter(maxFecha)) {
+                esFechaInvalida = true;
+            }
+        } catch (Exception e) {
+            esFechaInvalida = true;
+        }
 
         ServletContext context = getServletContext();
         List<Turno> listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
@@ -41,12 +60,13 @@ public class ReservarTurnoServlet extends HttpServlet {
             listaTurnos = new ArrayList<>();
         }
 
-        // Validación para evitar reservas duplicadas en el mismo horario y fecha
         boolean yaOcupado = false;
-        for (Turno t : listaTurnos) {
-            if (t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
-                yaOcupado = true;
-                break;
+        if (!esFechaInvalida) {
+            for (Turno t : listaTurnos) {
+                if (t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
+                    yaOcupado = true;
+                    break;
+                }
             }
         }
 
@@ -65,39 +85,60 @@ public class ReservarTurnoServlet extends HttpServlet {
             out.println(".info-group { text-align: left; background: #1e1e1e; padding: 18px; border-radius: 8px; margin: 20px 0; border: 1px solid #d4af37; box-shadow: inset 0 0 5px rgba(0,0,0,0.5); }");
             out.println(".info-group p { margin: 10px 0; font-size: 14px; color: #ffffff; }");
             out.println(".info-group strong { color: #d4af37; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }");
-            out.println("a.btn { display: inline-block; width: 100%; padding: 14px; background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); color: #000000; text-decoration: none; font-weight: bold; border-radius: 6px; text-transform: uppercase; margin-top: 10px; border: 1px solid #ffffff; letter-spacing: 1.5px; font-size: 14px; transition: all 0.3s ease; }");
-            out.println("a.btn:hover { background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%); color: #000000; box-shadow: 0 0 12px rgba(255, 255, 255, 0.4); }");
+            out.println("a.btn { display: inline-block; width: 100%; padding: 14px; color: #000000; text-decoration: none; font-weight: bold; border-radius: 6px; text-transform: uppercase; margin-top: 10px; font-size: 14px; transition: all 0.3s ease; text-align: center; }");
+            out.println("a.btn-home { background: linear-gradient(135deg, #d4af37 0%, #aa820a 100%); border: 1px solid #ffffff; }");
+            out.println("a.btn-home:hover { background: linear-gradient(135deg, #ffffff 0%, #d4af37 100%); }");
+            out.println("a.btn-wsp { background: #25d366; color: #ffffff; border: 1px solid #25d366; font-size: 14px; }");
+            out.println("a.btn-wsp:hover { background: #1eb854; box-shadow: 0 0 15px rgba(37, 211, 102, 0.4); }");
             out.println("</style>");
             out.println("</head>");
             out.println("<body>");
 
             out.println("<div class='card'>");
 
-            if (yaOcupado) {
+            if (esFechaInvalida) {
+                out.println("<h2 style='color: #e74c3c;'>Fecha No Permitida</h2>");
+                out.println("<p style='color: #e0e0e0; font-size: 14px;'>Solo puedes agendar citas desde la fecha de hoy hasta un máximo de <strong>15 días en el futuro</strong>.</p>");
+                out.println("<a href='HomeServlet' class='btn btn-home'>Volver al Inicio</a>");
+            } else if (yaOcupado) {
                 out.println("<h2 style='color: #e74c3c;'>Horario No Disponible</h2>");
                 out.println("<p style='color: #e0e0e0; font-size: 14px;'>El horario seleccionado (<strong>" + hora + "</strong>) ya ha sido reservado para la fecha <strong>" + fecha + "</strong>.</p>");
-                out.println("<p style='color: #aaa; font-size: 13px;'>Por favor selecciona un horario libre en la pantalla principal.</p>");
+                out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Seleccionar Otro Horario</a>");
             } else {
-                Turno nuevoTurno = new Turno(cliente, email, telefono, servicio, fecha, hora);
+                Turno nuevoTurno = new Turno(cliente, "N/A", telefono, servicio, fecha, hora);
                 listaTurnos.add(nuevoTurno);
                 context.setAttribute("listaTurnos", listaTurnos);
+
+                // Limpiar el número ingresado por el cliente para dejar solo dígitos
+                String telefonoLimpio = telefono.replaceAll("[^0-9]", "");
+
+                // Formatear mensaje del resumen
+                String mensajeTexto = "✂️ *Resumen de Reserva - Monsprat Barber Studio*\n\n"
+                        + "Hola " + cliente + ", aquí tienes el comprobante de tu cita:\n"
+                        + "📅 *Fecha:* " + fecha + "\n"
+                        + "⏰ *Hora:* " + hora + " hrs\n"
+                        + "💈 *Servicio(s):* " + servicio + "\n\n"
+                        + "¡Nos vemos pronto!";
+
+                // Generar enlace a la cuenta del cliente utilizando su número
+                String urlWhatsAppCliente = "https://wa.me/" + telefonoLimpio + "?text=" + URLEncoder.encode(mensajeTexto, "UTF-8");
 
                 out.println("<h2>Reserva Confirmada</h2>");
                 out.println("<p style='color: #2ecc71; font-size: 15px; font-weight: 500;'>¡Tu turno ha sido agendado con éxito!</p>");
 
                 out.println("<div class='info-group'>");
                 out.println("<p><strong>Cliente:</strong> " + cliente + "</p>");
-                out.println("<p><strong>Correo Electrónico:</strong> " + email + "</p>");
-                out.println("<p><strong>Teléfono / WhatsApp:</strong> " + telefono + "</p>");
-                out.println("<p><strong>Servicio:</strong> " + servicio + "</p>");
+                out.println("<p><strong>Teléfono:</strong> " + telefono + "</p>");
+                out.println("<p><strong>Servicios:</strong> " + servicio + "</p>");
                 out.println("<p><strong>Fecha:</strong> " + fecha + "</p>");
                 out.println("<p><strong>Hora:</strong> " + hora + " hrs</p>");
                 out.println("</div>");
+
+                out.println("<a href='" + urlWhatsAppCliente + "' target='_blank' class='btn btn-wsp'>📱 Abrir mi comprobante en WhatsApp</a>");
+                out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Volver al Inicio</a>");
             }
 
-            out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn'>Volver al Inicio</a>");
             out.println("</div>");
-
             out.println("</body>");
             out.println("</html>");
         }
