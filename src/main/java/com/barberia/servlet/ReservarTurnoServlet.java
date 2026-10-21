@@ -15,12 +15,22 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLEncoder;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @WebServlet("/ReservarTurnoServlet")
 public class ReservarTurnoServlet extends HttpServlet {
+
+    // Lista de Festivos Oficiales de Colombia 2026
+    private static final List<String> FESTIVOS_COLOMBIA = Arrays.asList(
+        "2026-01-01", "2026-01-12", "2026-03-23", "2026-04-02", "2026-04-03", 
+        "2026-05-01", "2026-05-18", "2026-06-08", "2026-06-15", "2026-06-29", 
+        "2026-07-20", "2026-08-07", "2026-08-17", "2026-10-12", "2026-11-02", 
+        "2026-11-16", "2026-12-08", "2026-12-25"
+    );
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -40,16 +50,25 @@ public class ReservarTurnoServlet extends HttpServlet {
         String fecha = request.getParameter("fecha");
         String hora = request.getParameter("hora");
 
-        // Validar límite de fecha (Hoy hasta 15 días)
+        // Validar límite de fecha (Hoy hasta 15 días) y no permitir Domingos ni Festivos
         boolean esFechaInvalida = false;
+        boolean esDomingoOFestivo = false;
+
         try {
             LocalDate hoy = LocalDate.now();
             LocalDate maxFecha = hoy.plusDays(15);
             LocalDate fechaReserva = LocalDate.parse(fecha);
 
+            // Validar si está fuera del rango permitido de 15 días
             if (fechaReserva.isBefore(hoy) || fechaReserva.isAfter(maxFecha)) {
                 esFechaInvalida = true;
             }
+
+            // Validar si es Domingo o si la fecha coincide con un Festivo de Colombia
+            if (fechaReserva.getDayOfWeek() == DayOfWeek.SUNDAY || FESTIVOS_COLOMBIA.contains(fecha)) {
+                esDomingoOFestivo = true;
+            }
+
         } catch (Exception e) {
             esFechaInvalida = true;
         }
@@ -61,7 +80,7 @@ public class ReservarTurnoServlet extends HttpServlet {
         }
 
         boolean yaOcupado = false;
-        if (!esFechaInvalida) {
+        if (!esFechaInvalida && !esDomingoOFestivo) {
             for (Turno t : listaTurnos) {
                 if (t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
                     yaOcupado = true;
@@ -96,7 +115,11 @@ public class ReservarTurnoServlet extends HttpServlet {
 
             out.println("<div class='card'>");
 
-            if (esFechaInvalida) {
+            if (esDomingoOFestivo) {
+                out.println("<h2 style='color: #e74c3c;'>Día No Laboral</h2>");
+                out.println("<p style='color: #e0e0e0; font-size: 14px;'>Los <strong>domingos y días festivos</strong> no hay servicio en Monsprat Barber Studio. Por favor, selecciona un día hábil.</p>");
+                out.println("<a href='HomeServlet' class='btn btn-home'>Volver al Inicio</a>");
+            } else if (esFechaInvalida) {
                 out.println("<h2 style='color: #e74c3c;'>Fecha No Permitida</h2>");
                 out.println("<p style='color: #e0e0e0; font-size: 14px;'>Solo puedes agendar citas desde la fecha de hoy hasta un máximo de <strong>15 días en el futuro</strong>.</p>");
                 out.println("<a href='HomeServlet' class='btn btn-home'>Volver al Inicio</a>");
@@ -110,7 +133,7 @@ public class ReservarTurnoServlet extends HttpServlet {
                 context.setAttribute("listaTurnos", listaTurnos);
 
                 // Limpiar el número ingresado por el cliente para dejar solo dígitos
-                String telefonoLimpio = telefono.replaceAll("[^0-9]", "");
+                String telefonoLimpio = (telefono != null) ? telefono.replaceAll("[^0-9]", "") : "";
 
                 // Formatear mensaje del resumen
                 String mensajeTexto = "✂️ *Resumen de Reserva - Monsprat Barber Studio*\n\n"
