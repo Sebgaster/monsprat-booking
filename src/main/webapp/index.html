@@ -90,6 +90,14 @@
             outline: none;
             border-color: #c5a059;
         }
+        optgroup {
+            color: #c5a059;
+            font-weight: bold;
+            font-style: normal;
+        }
+        option {
+            color: #fff;
+        }
         button {
             width: 100%;
             padding: 14px;
@@ -190,10 +198,28 @@
         <div class="form-group">
             <label for="servicio">Servicio</label>
             <select id="servicio" name="servicio" required>
-                <option value="Corte de Cabello">Corte de Cabello (1 hora)</option>
-                <option value="Arreglo de Barba">Arreglo de Barba (1 hora)</option>
-                <option value="Corte + Barba">Corte + Barba (1 hora)</option>
-                <option value="Tintura / Color">Tintura / Color (1 hora)</option>
+                <option value="" disabled selected>-- Selecciona un servicio --</option>
+                
+                <optgroup label="Cortes y Barba">
+                    <option value="Corte de Cabello">Corte de Cabello</option>
+                    <option value="Arreglo de Barba">Arreglo de Barba</option>
+                    <option value="Corte + Barba">Corte + Barba</option>
+                    <option value="Pigmentación de Barba">Pigmentación de Barba</option>
+                </optgroup>
+                
+                <optgroup label="Color">
+                    <option value="Tintura / Color">Tintura / Color</option>
+                </optgroup>
+                
+                <optgroup label="Facial y Depilación">
+                    <option value="Arreglo de Cejas">Arreglo de Cejas</option>
+                    <option value="Depilación de Nariz">Depilación de Nariz</option>
+                    <option value="Depilación de Oídos">Depilación de Oídos</option>
+                    <option value="Mascarilla Puntos Negros">Mascarilla Puntos Negros</option>
+                    <option value="Mascarilla de Colágeno">Mascarilla de Colágeno</option>
+                    <option value="Exfoliación Facial">Exfoliación Facial</option>
+                    <option value="Mascarilla Oro">Mascarilla Oro</option>
+                </optgroup>
             </select>
         </div>
 
