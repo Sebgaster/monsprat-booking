@@ -103,7 +103,7 @@
             margin-top: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: background 0.3s ease, transform 0.1s ease;
+            transition: background 0.3s ease;
         }
         button:hover {
             background-color: #a38241;
@@ -169,10 +169,10 @@
 <body>
 
 <form action="ReservarTurnoServlet" method="POST" id="bookingForm" class="main-wrapper">
-    <!-- Campo oculto para enviar la hora seleccionada al Servlet -->
+    <!-- Campo oculto para enviar la hora elegida desde la cuadrícula al backend -->
     <input type="hidden" id="hora" name="hora" required>
 
-    <!-- FORMULARIO DE RESERVA -->
+    <!-- FORMULARIO DE RESERVA (SIN EL CAMPOS DE HORA) -->
     <div class="card">
         <div class="header-logo">
             <img src="images/logo.jpg" alt="Monsprat Barber Studio Logo">
@@ -201,16 +201,16 @@
         </div>
     </div>
 
-    <!-- PANEL DE FRANJAS DISPONIBLES -->
+    <!-- PANEL DE FRANJAS DISPONIBLES Y BOTÓN FINAL DE CONFIRMACIÓN -->
     <div class="card">
         <h2>Disponibilidad en Tiempo Real</h2>
 
         <div class="filter-box">
             <label for="fechaFiltro">Fecha seleccionada:</label>
-            <input type="text" id="fechaFiltro" name="fechaFiltro" placeholder="Selecciona fecha en la izquierda" readonly>
+            <input type="text" id="fechaFiltro" name="fechaFiltro" placeholder="Selecciona una fecha a la izquierda" readonly>
         </div>
 
-        <label>Selecciona una franja horaria:</label>
+        <label>Selecciona tu horario:</label>
         <div class="schedule-grid" id="scheduleGrid">
             <div class="time-slot" data-time="10:00"><div>10:00 AM</div><span class="status-badge">60 min</span></div>
             <div class="time-slot" data-time="11:00"><div>11:00 AM</div><span class="status-badge">60 min</span></div>
@@ -227,12 +227,12 @@
         <button type="submit">Confirmar Reserva</button>
 
         <p class="note">
-            * Selecciona la franja horaria deseada para habilitar el envío de la reserva.
+            * Selecciona una franja horaria para habilitar la confirmación.
         </p>
     </div>
 </form>
 
-<!-- Scripts de Flatpickr e Idioma Español -->
+<!-- Scripts de Flatpickr -->
 <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 <script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
 
@@ -271,7 +271,7 @@
 
     flatpickr("#fecha", configFlatpickr);
 
-    // Selección interactiva de franjas horarias
+    // Asignación de hora mediante clic en los cuadros de franja horaria
     timeSlots.forEach(slot => {
         slot.addEventListener("click", function() {
             timeSlots.forEach(s => s.classList.remove("selected"));
@@ -280,7 +280,7 @@
         });
     });
 
-    // Validar antes de enviar el formulario
+    // Validación al enviar el formulario
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
         if (!inputFecha.value) {
             alert("Por favor, selecciona una fecha.");
@@ -288,7 +288,7 @@
             return;
         }
         if (!inputHora.value) {
-            alert("Por favor, selecciona una franja horaria haciendo clic en el cuadro de horario.");
+            alert("Por favor, selecciona una franja horaria haciendo clic en uno de los bloques de horario.");
             e.preventDefault();
             return;
         }
