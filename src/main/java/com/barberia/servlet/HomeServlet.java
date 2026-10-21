@@ -101,6 +101,7 @@ public class HomeServlet extends HttpServlet {
             out.println("<form action='ReservarTurnoServlet' method='POST' id='bookingForm' class='main-wrapper'>");
             out.println("<input type='hidden' id='hora' name='hora' required>");
 
+            // PRIMERA TARJETA: FORMULARIO
             out.println("<div class='card'>");
             out.println("<div class='header-logo'><img src='images/logo.jpg' alt='Monsprat Barber Studio Logo'></div>");
             out.println("<h2>Reserva de Turno</h2>");
@@ -108,6 +109,12 @@ public class HomeServlet extends HttpServlet {
             out.println("<div class='form-group'>");
             out.println("<label for='cliente'>Nombre Completo</label>");
             out.println("<input type='text' id='cliente' name='cliente' required placeholder='Ej. Carlos Mendoza'>");
+            out.println("</div>");
+
+            // CAMPO DE WHATSAPP / TELÉFONO
+            out.println("<div class='form-group'>");
+            out.println("<label for='telefono'>Número de WhatsApp</label>");
+            out.println("<input type='tel' id='telefono' name='telefono' required placeholder='Ej. 3001234567'>");
             out.println("</div>");
 
             out.println("<div class='form-group'>");
@@ -145,6 +152,7 @@ public class HomeServlet extends HttpServlet {
             out.println("</div>");
             out.println("</div>");
 
+            // SEGUNDA TARJETA: DISPONIBILIDAD Y BOTÓN FINAL
             out.println("<div class='card'>");
             out.println("<h2>Disponibilidad en Tiempo Real</h2>");
 
@@ -180,6 +188,7 @@ public class HomeServlet extends HttpServlet {
             out.println("const festivosColombia = ['2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25'];");
             out.println("const inputFecha = document.getElementById('fecha');");
             out.println("const inputHora = document.getElementById('hora');");
+            out.println("const inputTel = document.getElementById('telefono');");
             out.println("const timeSlots = document.querySelectorAll('.time-slot:not(.disabled)');");
 
             out.println("flatpickr('#fecha', {");
@@ -205,6 +214,7 @@ public class HomeServlet extends HttpServlet {
             out.println("});");
 
             out.println("document.getElementById('bookingForm').addEventListener('submit', function(e) {");
+            out.println("  if (!inputTel.value.trim()) { alert('Por favor, ingresa tu número de WhatsApp.'); e.preventDefault(); return; }");
             out.println("  if (!inputFecha.value) { alert('Por favor, selecciona una fecha.'); e.preventDefault(); return; }");
             out.println("  if (!inputHora.value) { alert('Por favor, selecciona una franja horaria haciendo clic en uno de los bloques.'); e.preventDefault(); return; }");
             out.println("});");
