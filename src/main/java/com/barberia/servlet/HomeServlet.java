@@ -46,9 +46,10 @@ public class HomeServlet extends HttpServlet {
             listaTurnos = new ArrayList<>();
         }
 
+        // Agregada la hora "20:00" para cubrir la franja de 8:00 PM - 9:00 PM
         List<String> horasBase = Arrays.asList(
             "10:00", "11:00", "12:00", "13:00", 
-            "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"
+            "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"
         );
 
         List<String> horasOcupadas = new ArrayList<>();
@@ -242,6 +243,7 @@ public class HomeServlet extends HttpServlet {
             case "17:00": return "05:00 PM - 06:00 PM";
             case "18:00": return "06:00 PM - 07:00 PM";
             case "19:00": return "07:00 PM - 08:00 PM";
+            case "20:00": return "08:00 PM - 09:00 PM";
             default: return hora24;
         }
     }
