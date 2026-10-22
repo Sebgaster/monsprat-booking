@@ -69,35 +69,38 @@ public class HomeServlet extends HttpServlet {
             out.println("<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css'>");
             out.println("<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css'>");
 
+            // --- INICIO DE NUEVOS ESTILOS (NEGRO Y DORADO PREMIUM) ---
             out.println("<style>");
             out.println("* { box-sizing: border-box; }");
-            out.println("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0d0d0d; color: #f1f1f1; margin: 0; padding: 30px 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }");
+            out.println("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #080808; color: #f1f1f1; margin: 0; padding: 30px 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }");
             out.println(".main-wrapper { display: flex; flex-wrap: wrap; gap: 30px; max-width: 900px; width: 100%; justify-content: center; position: relative; }");
-            out.println(".card { background-color: #1a1a1a; padding: 30px; border-radius: 12px; box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8); border: 1px solid #2a2a2a; flex: 1 1 400px; max-width: 440px; position: relative; }");
+            out.println(".card { background: linear-gradient(145deg, #151515, #0a0a0a); padding: 30px; border-radius: 12px; box-shadow: 0 8px 30px rgba(197, 160, 89, 0.12); border: 1px solid #2a2a2a; flex: 1 1 400px; max-width: 440px; position: relative; }");
             out.println(".header-logo { text-align: center; margin-bottom: 20px; }");
-            out.println(".header-logo img { max-width: 130px; height: auto; border-radius: 8px; border: 1px solid #c5a059; padding: 4px; background: #0d0d0d; }");
-            out.println("h2 { text-align: center; color: #c5a059; margin-top: 0; margin-bottom: 25px; font-weight: 300; letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; border-bottom: 1px solid #2a2a2a; padding-bottom: 10px; }");
+            out.println(".header-logo img { max-width: 130px; height: auto; border-radius: 8px; border: 2px solid #c5a059; padding: 4px; background: #080808; box-shadow: 0 0 15px rgba(197, 160, 89, 0.25); }");
+            out.println("h2 { text-align: center; color: #d4af37; margin-top: 0; margin-bottom: 25px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; border-bottom: 2px solid #c5a059; padding-bottom: 10px; }");
             out.println(".form-group { margin-bottom: 18px; }");
-            out.println("label { display: block; margin-bottom: 6px; font-size: 13px; color: #aaa; text-transform: uppercase; letter-spacing: 0.5px; }");
-            out.println("input, select { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 6px; background-color: #252525; color: #fff; font-size: 14px; transition: border 0.3s; }");
-            out.println("input:focus, select:focus { outline: none; border-color: #c5a059; }");
-            out.println("optgroup { color: #c5a059; font-style: normal; font-weight: bold; background-color: #1a1a1a; }");
-            out.println("option { color: #fff; background-color: #252525; }");
-            out.println("button { width: 100%; padding: 14px; background-color: #c5a059; border: none; border-radius: 6px; color: #0d0d0d; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.3s ease; }");
-            out.println("button:hover { background-color: #a38241; }");
-            out.println(".filter-box { background: #222; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; }");
+            out.println("label { display: block; margin-bottom: 6px; font-size: 13px; color: #d4af37; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }");
+            out.println("input, select { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 6px; background-color: #1a1a1a; color: #fff; font-size: 14px; transition: all 0.3s; }");
+            out.println("input:focus, select:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.4); }");
+            out.println("optgroup { color: #d4af37; font-style: normal; font-weight: bold; background-color: #111; }");
+            out.println("option { color: #fff; background-color: #1a1a1a; }");
+            out.println("button { width: 100%; padding: 14px; background: linear-gradient(90deg, #c5a059, #d4af37); border: none; border-radius: 6px; color: #000; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s, box-shadow 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.25); }");
+            out.println("button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(197, 160, 89, 0.45); }");
+            out.println(".filter-box { background: #111; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; }");
             out.println(".schedule-grid { display: grid; grid-template-columns: 1fr; gap: 10px; margin-top: 15px; max-height: 280px; overflow-y: auto; padding-right: 5px; }");
-            out.println(".time-slot { background: #252525; padding: 12px; border-radius: 6px; text-align: center; border: 1px solid #333; font-size: 14px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }");
-            out.println(".time-slot:hover { border-color: #c5a059; background: #2e2e2e; }");
-            out.println(".time-slot.selected { background: #c5a059; color: #0d0d0d; border-color: #ffffff; font-weight: bold; }");
-            out.println(".time-slot.selected .status-badge { background-color: #0d0d0d; color: #c5a059; }");
-            out.println(".time-slot.disabled { background-color: #1a1a1a; border-color: #333; color: #555; cursor: not-allowed; opacity: 0.6; }");
-            out.println(".status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background-color: #1e3a29; color: #2ecc71; }");
-            out.println(".status-badge.occupied { background-color: #3a1e1e; color: #e74c3c; }");
+            out.println(".time-slot { background: #1a1a1a; padding: 12px; border-radius: 6px; text-align: center; border: 1px solid #333; font-size: 14px; cursor: pointer; transition: all 0.2s ease; display: flex; justify-content: space-between; align-items: center; }");
+            out.println(".time-slot:hover { border-color: #c5a059; background: #222; box-shadow: 0 0 10px rgba(197, 160, 89, 0.2); }");
+            out.println(".time-slot.selected { background: #c5a059; color: #000; border-color: #d4af37; font-weight: bold; box-shadow: 0 0 12px rgba(197, 160, 89, 0.5); }");
+            out.println(".time-slot.selected .status-badge { background-color: #000; color: #d4af37; border: 1px solid #d4af37; }");
+            out.println(".time-slot.disabled { background-color: #111; border-color: #222; color: #666; cursor: not-allowed; opacity: 0.8; }");
+            out.println(".status-badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: bold; background-color: #1a1a1a; color: #d4af37; border: 1px solid #c5a059; }");
+            out.println(".status-badge.occupied { background-color: #1a1a1a; color: #888; border: 1px solid #444; }");
             out.println(".note { font-size: 12px; color: #888; margin-top: 15px; text-align: center; }");
-            out.println(".btn-admin-access { position: absolute; top: 12px; right: 15px; color: #888; font-size: 11px; text-decoration: none; border: 1px solid #333; padding: 4px 8px; border-radius: 4px; transition: all 0.3s ease; }");
-            out.println(".btn-admin-access:hover { color: #c5a059; border-color: #c5a059; background: #222; }");
+            out.println(".btn-admin-access { position: absolute; top: 12px; right: 15px; color: #888; font-size: 11px; text-decoration: none; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; transition: all 0.3s ease; }");
+            out.println(".btn-admin-access:hover { color: #000; border-color: #c5a059; background: #c5a059; box-shadow: 0 0 10px rgba(197, 160, 89, 0.4); }");
             out.println("</style>");
+            // --- FIN DE NUEVOS ESTILOS ---
+
             out.println("</head>");
             out.println("<body>");
 
