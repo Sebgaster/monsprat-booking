@@ -41,6 +41,11 @@ public class ReservarTurnoServlet extends HttpServlet {
 
         String cliente = request.getParameter("cliente");
         String telefono = request.getParameter("telefono");
+        String barbero = request.getParameter("barbero");
+        
+        if (barbero == null || barbero.trim().isEmpty()){
+             barbero = "Santiago Monsalve";
+            }
 
         String[] serviciosSeleccionados = request.getParameterValues("servicio");
         String servicio = (serviciosSeleccionados != null && serviciosSeleccionados.length > 0)

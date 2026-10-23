@@ -5,24 +5,24 @@ import java.util.UUID;
 public class Turno {
     private String id;
     private String cliente;
-    private String email;
     private String telefono;
     private String servicio;
     private String fecha;
     private String hora;
+    private String barbero;
 
     public Turno() {
-        this.id = UUID.randomUUID().toString(); // Genera un ID único automático
+        this.id = UUID.randomUUID().toString(); 
     }
 
-    public Turno(String cliente, String email, String telefono, String servicio, String fecha, String hora) {
+    public Turno(String cliente, String telefono, String servicio, String fecha, String hora, String barbero) {
         this.id = UUID.randomUUID().toString();
         this.cliente = cliente;
-        this.email = email;
         this.telefono = telefono;
         this.servicio = servicio;
         this.fecha = fecha;
         this.hora = hora;
+        this.barbero = barbero;
     }
 
     // Getters y Setters
@@ -40,14 +40,6 @@ public class Turno {
 
     public void setCliente(String cliente) {
         this.cliente = cliente;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
     }
 
     public String getTelefono() {
@@ -80,5 +72,13 @@ public class Turno {
 
     public void setHora(String hora) {
         this.hora = hora;
+    }
+    
+    public String getBarbero(){
+        return barbero;
+    }
+    
+    public void setBarbero(String barbero) {
+        this.barbero = barbero;
     }
 }

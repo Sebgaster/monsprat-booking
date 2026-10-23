@@ -15,7 +15,7 @@
         }
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0d0d0d;
+            background-color: #080808;
             color: #f1f1f1;
             margin: 0;
             padding: 30px 20px;
@@ -31,15 +31,17 @@
             max-width: 900px;
             width: 100%;
             justify-content: center;
+            position: relative;
         }
         .card {
-            background-color: #1a1a1a;
+            background: linear-gradient(145deg, #151515, #0a0a0a);
             padding: 30px;
             border-radius: 12px;
-            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 8px 30px rgba(197, 160, 89, 0.12);
             border: 1px solid #2a2a2a;
             flex: 1 1 400px;
             max-width: 440px;
+            position: relative;
         }
         .header-logo {
             text-align: center;
@@ -49,20 +51,21 @@
             max-width: 130px;
             height: auto;
             border-radius: 8px;
-            border: 1px solid #c5a059;
+            border: 2px solid #c5a059;
             padding: 4px;
-            background: #0d0d0d;
+            background: #080808;
+            box-shadow: 0 0 15px rgba(197, 160, 89, 0.25);
         }
         h2 {
             text-align: center;
-            color: #c5a059;
+            color: #d4af37;
             margin-top: 0;
             margin-bottom: 25px;
-            font-weight: 300;
+            font-weight: 600;
             letter-spacing: 1px;
             text-transform: uppercase;
             font-size: 1.2rem;
-            border-bottom: 1px solid #2a2a2a;
+            border-bottom: 2px solid #c5a059;
             padding-bottom: 10px;
         }
         .form-group {
@@ -70,54 +73,132 @@
         }
         label {
             display: block;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
             font-size: 13px;
-            color: #aaa;
+            color: #d4af37;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            font-weight: bold;
         }
         input, select {
             width: 100%;
             padding: 12px;
             border: 1px solid #333;
             border-radius: 6px;
-            background-color: #252525;
+            background-color: #1a1a1a;
             color: #fff;
             font-size: 14px;
-            transition: border 0.3s;
+            transition: all 0.3s;
         }
         input:focus, select:focus {
             outline: none;
             border-color: #c5a059;
+            box-shadow: 0 0 8px rgba(197, 160, 89, 0.4);
         }
         optgroup {
-            color: #c5a059;
+            color: #d4af37;
             font-weight: bold;
             font-style: normal;
+            background-color: #111;
         }
         option {
             color: #fff;
+            background-color: #1a1a1a;
         }
+
+        /* ESTILOS TARJETAS DE BARBEROS (ESTILO WELLBOOK) */
+        .barber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+        }
+        .barber-card {
+            background: #111;
+            border: 2px solid #2a2a2a;
+            border-radius: 12px;
+            padding: 14px 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .barber-card:hover {
+            border-color: #c5a059;
+            background: #181818;
+            transform: translateY(-2px);
+        }
+        .barber-card.selected {
+            border-color: #d4af37;
+            background: linear-gradient(145deg, #1f1b0e, #111111);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.35);
+        }
+        .barber-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #c5a059;
+            margin-bottom: 10px;
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.3);
+        }
+        .barber-name {
+            font-size: 13px;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 6px;
+            line-height: 1.2;
+        }
+        .barber-meta {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            font-size: 11px;
+        }
+        .barber-badge {
+            background: #1f1f1f;
+            color: #aaa;
+            padding: 3px 8px;
+            border-radius: 12px;
+            border: 1px solid #333;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .barber-card.selected .barber-badge {
+            color: #d4af37;
+            border-color: #d4af37;
+            background: #2a220e;
+        }
+        .barber-rating {
+            color: #f1c40f;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
         button {
             width: 100%;
             padding: 14px;
-            background-color: #c5a059;
+            background: linear-gradient(90deg, #c5a059, #d4af37);
             border: none;
             border-radius: 6px;
-            color: #0d0d0d;
+            color: #000;
             font-weight: bold;
             font-size: 15px;
             cursor: pointer;
             margin-top: 15px;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: background 0.3s ease;
+            transition: transform 0.2s, box-shadow 0.3s;
+            box-shadow: 0 4px 15px rgba(197, 160, 89, 0.25);
         }
         button:hover {
-            background-color: #a38241;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(197, 160, 89, 0.45);
         }
         .filter-box {
-            background: #222;
+            background: #111;
             padding: 12px;
             border-radius: 6px;
             margin-bottom: 15px;
@@ -133,7 +214,7 @@
             padding-right: 5px;
         }
         .time-slot {
-            background: #252525;
+            background: #1a1a1a;
             padding: 12px;
             border-radius: 6px;
             text-align: center;
@@ -147,17 +228,20 @@
         }
         .time-slot:hover {
             border-color: #c5a059;
-            background: #2e2e2e;
+            background: #222;
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.2);
         }
         .time-slot.selected {
             background: #c5a059;
-            color: #0d0d0d;
-            border-color: #ffffff;
+            color: #000;
+            border-color: #d4af37;
             font-weight: bold;
+            box-shadow: 0 0 12px rgba(197, 160, 89, 0.5);
         }
         .time-slot.selected .status-badge {
-            background-color: #0d0d0d;
-            color: #c5a059;
+            background-color: #000;
+            color: #d4af37;
+            border: 1px solid #d4af37;
         }
         .status-badge {
             display: inline-block;
@@ -165,8 +249,9 @@
             border-radius: 4px;
             font-size: 11px;
             font-weight: bold;
-            background-color: #1e3a29;
-            color: #2ecc71;
+            background-color: #1a1a1a;
+            color: #d4af37;
+            border: 1px solid #c5a059;
         }
         .note {
             font-size: 12px;
@@ -174,14 +259,37 @@
             margin-top: 15px;
             text-align: center;
         }
+        .btn-admin-access {
+            position: absolute;
+            top: 12px;
+            right: 15px;
+            color: #888;
+            font-size: 11px;
+            text-decoration: none;
+            border: 1px solid #444;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        .btn-admin-access:hover {
+            color: #000;
+            border-color: #c5a059;
+            background: #c5a059;
+            box-shadow: 0 0 10px rgba(197, 160, 89, 0.4);
+        }
     </style>
 </head>
 <body>
 
 <form action="ReservarTurnoServlet" method="POST" id="bookingForm" class="main-wrapper">
     <input type="hidden" id="hora" name="hora" required>
+    
+    <!-- Campo Oculto para enviar el barbero seleccionado -->
+    <input type="hidden" id="barbero" name="barbero" value="Santiago Monsalve" required>
 
     <div class="card">
+        <a href="AdminServlet" class="btn-admin-access">⚙️ Admin</a>
+
         <div class="header-logo">
             <img src="images/logo.jpg" alt="Monsprat Barber Studio Logo">
         </div>
@@ -191,6 +299,26 @@
         <div class="form-group">
             <label for="cliente">Nombre Completo</label>
             <input type="text" id="cliente" name="cliente" required placeholder="Ej. Carlos Mendoza">
+        </div>
+
+        <div class="form-group">
+            <label for="telefono">Número de WhatsApp</label>
+            <input type="tel" id="telefono" name="telefono" required placeholder="Ej. 3001234567">
+        </div>
+
+        <!-- TARJETA SELECTORA DE BARBERO -->
+        <div class="form-group">
+            <label>Elige tu Barbero</label>
+            <div class="barber-grid">
+                <div class="barber-card selected" onclick="seleccionarBarbero('Santiago Monsalve', this)">
+                    <img src="images/santiago.jpg" alt="Santiago Monsalve" class="barber-avatar" onerror="this.src='images/logo.jpg'">
+                    <span class="barber-name">Santiago Monsalve</span>
+                    <div class="barber-meta">
+                        <span class="barber-badge">Barbero</span>
+                        <span class="barber-rating">★ 5.0</span>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="form-group">
@@ -247,6 +375,7 @@
             <div class="time-slot" data-time="17:00"><div>05:00 PM - 06:00 PM</div><span class="status-badge">Disponible</span></div>
             <div class="time-slot" data-time="18:00"><div>06:00 PM - 07:00 PM</div><span class="status-badge">Disponible</span></div>
             <div class="time-slot" data-time="19:00"><div>07:00 PM - 08:00 PM</div><span class="status-badge">Disponible</span></div>
+            <div class="time-slot" data-time="20:00"><div>08:00 PM - 09:00 PM</div><span class="status-badge">Disponible</span></div>
         </div>
 
         <button type="submit">Confirmar Reserva</button>
@@ -271,7 +400,14 @@
     const inputFecha = document.getElementById("fecha");
     const inputFechaFiltro = document.getElementById("fechaFiltro");
     const inputHora = document.getElementById("hora");
-    const timeSlots = document.querySelectorAll(".time-slot");
+    const inputTel = document.getElementById("telefono");
+    const timeSlots = document.querySelectorAll(".time-slot:not(.disabled)");
+
+    function seleccionarBarbero(nombreBarbero, elemento) {
+        document.querySelectorAll('.barber-card').forEach(c => c.classList.remove('selected'));
+        elemento.classList.add('selected');
+        document.getElementById('barbero').value = nombreBarbero;
+    }
 
     const configFlatpickr = {
         locale: "es",
@@ -304,6 +440,11 @@
     });
 
     document.getElementById("bookingForm").addEventListener("submit", function(e) {
+        if (!inputTel || !inputTel.value.trim()) {
+            alert("Por favor, ingresa tu número de WhatsApp.");
+            e.preventDefault();
+            return;
+        }
         if (!inputFecha.value) {
             alert("Por favor, selecciona una fecha.");
             e.preventDefault();

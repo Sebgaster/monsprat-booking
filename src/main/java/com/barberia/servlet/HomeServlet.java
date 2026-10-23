@@ -40,13 +40,30 @@ public class HomeServlet extends HttpServlet {
             fechaFiltro = LocalDate.now().toString();
         }
 
+        String barberoFiltro = request.getParameter("barberoFiltro");
+        if (barberoFiltro == null || barberoFiltro.trim().isEmpty()) {
+            barberoFiltro = "Santiago Monsalve";
+        }
+
+        String clientePrevio = request.getParameter("cliente");
+        if (clientePrevio == null) clientePrevio = "";
+
+        String telefonoPrevio = request.getParameter("telefono");
+        if (telefonoPrevio == null) telefonoPrevio = "";
+
+        // PERSISTENCIA MULTI-SERVICIO: Lectura de servicios elegidos previa recarga (separados por coma)
+        String serviciosPreviosStr = request.getParameter("servicio");
+        List<String> serviciosPrevios = new ArrayList<>();
+        if (serviciosPreviosStr != null && !serviciosPreviosStr.trim().isEmpty()) {
+            serviciosPrevios = Arrays.asList(serviciosPreviosStr.split(","));
+        }
+
         ServletContext context = getServletContext();
         List<Turno> listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
         if (listaTurnos == null) {
             listaTurnos = new ArrayList<>();
         }
 
-        // Agregada la hora "20:00" para cubrir la franja de 8:00 PM - 9:00 PM
         List<String> horasBase = Arrays.asList(
             "10:00", "11:00", "12:00", "13:00", 
             "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00"
@@ -54,7 +71,7 @@ public class HomeServlet extends HttpServlet {
 
         List<String> horasOcupadas = new ArrayList<>();
         for (Turno t : listaTurnos) {
-            if (t.getFecha().equals(fechaFiltro)) {
+            if (t.getFecha().equals(fechaFiltro) && t.getBarbero() != null && t.getBarbero().equals(barberoFiltro)) {
                 horasOcupadas.add(t.getHora());
             }
         }
@@ -69,7 +86,6 @@ public class HomeServlet extends HttpServlet {
             out.println("<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css'>");
             out.println("<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/flatpickr/dist/themes/dark.css'>");
 
-            // --- INICIO DE NUEVOS ESTILOS (NEGRO Y DORADO PREMIUM) ---
             out.println("<style>");
             out.println("* { box-sizing: border-box; }");
             out.println("body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #080808; color: #f1f1f1; margin: 0; padding: 30px 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }");
@@ -79,11 +95,29 @@ public class HomeServlet extends HttpServlet {
             out.println(".header-logo img { max-width: 130px; height: auto; border-radius: 8px; border: 2px solid #c5a059; padding: 4px; background: #080808; box-shadow: 0 0 15px rgba(197, 160, 89, 0.25); }");
             out.println("h2 { text-align: center; color: #d4af37; margin-top: 0; margin-bottom: 25px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-size: 1.2rem; border-bottom: 2px solid #c5a059; padding-bottom: 10px; }");
             out.println(".form-group { margin-bottom: 18px; }");
-            out.println("label { display: block; margin-bottom: 6px; font-size: 13px; color: #d4af37; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }");
-            out.println("input, select { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 6px; background-color: #1a1a1a; color: #fff; font-size: 14px; transition: all 0.3s; }");
-            out.println("input:focus, select:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.4); }");
-            out.println("optgroup { color: #d4af37; font-style: normal; font-weight: bold; background-color: #111; }");
-            out.println("option { color: #fff; background-color: #1a1a1a; }");
+            out.println("label { display: block; margin-bottom: 8px; font-size: 13px; color: #d4af37; text-transform: uppercase; letter-spacing: 0.5px; font-weight: bold; }");
+            out.println("input[type='text'], input[type='tel'] { width: 100%; padding: 12px; border: 1px solid #333; border-radius: 6px; background-color: #1a1a1a; color: #fff; font-size: 14px; transition: all 0.3s; }");
+            out.println("input:focus { outline: none; border-color: #c5a059; box-shadow: 0 0 8px rgba(197, 160, 89, 0.4); }");
+
+            // ESTILOS CONTENEDOR MULTI-SERVICIO DE CHECKBOXES
+            out.println(".services-container { background: #111; border: 1px solid #333; border-radius: 8px; padding: 12px; max-height: 220px; overflow-y: auto; }");
+            out.println(".service-category { color: #d4af37; font-size: 11px; font-weight: bold; text-transform: uppercase; margin: 10px 0 6px 0; border-bottom: 1px dashed #333; padding-bottom: 3px; }");
+            out.println(".service-category:first-child { margin-top: 0; }");
+            out.println(".checkbox-label { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border-radius: 4px; cursor: pointer; transition: background 0.2s; font-size: 13px; color: #ddd; margin-bottom: 2px; }");
+            out.println(".checkbox-label:hover { background: #1f1f1f; }");
+            out.println(".checkbox-label input[type='checkbox'] { width: 16px; height: 16px; accent-color: #d4af37; cursor: pointer; }");
+            out.println(".checkbox-label.disabled-option { opacity: 0.35; cursor: not-allowed; }");
+
+            out.println(".barber-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; }");
+            out.println(".barber-card { background: #111; border: 2px solid #2a2a2a; border-radius: 12px; padding: 14px 10px; text-align: center; cursor: pointer; transition: all 0.3s ease; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }");
+            out.println(".barber-card:hover { border-color: #c5a059; background: #181818; transform: translateY(-2px); }");
+            out.println(".barber-card.selected { border-color: #d4af37; background: linear-gradient(145deg, #1f1b0e, #111111); box-shadow: 0 0 15px rgba(212, 175, 55, 0.35); }");
+            out.println(".barber-avatar { width: 70px; height: 70px; border-radius: 50%; object-fit: cover; border: 2px solid #c5a059; margin-bottom: 10px; box-shadow: 0 0 10px rgba(197, 160, 89, 0.3); }");
+            out.println(".barber-name { font-size: 13px; font-weight: bold; color: #ffffff; margin-bottom: 6px; line-height: 1.2; }");
+            out.println(".barber-meta { display: flex; gap: 6px; align-items: center; font-size: 11px; }");
+            out.println(".barber-badge { background: #1f1f1f; color: #aaa; padding: 3px 8px; border-radius: 12px; border: 1px solid #333; font-size: 10px; font-weight: 600; }");
+            out.println(".barber-card.selected .barber-badge { color: #d4af37; border-color: #d4af37; background: #2a220e; }");
+            out.println(".barber-rating { color: #f1c40f; font-weight: bold; font-size: 11px; }");
             out.println("button { width: 100%; padding: 14px; background: linear-gradient(90deg, #c5a059, #d4af37); border: none; border-radius: 6px; color: #000; font-weight: bold; font-size: 15px; cursor: pointer; margin-top: 15px; text-transform: uppercase; letter-spacing: 1px; transition: transform 0.2s, box-shadow 0.3s; box-shadow: 0 4px 15px rgba(197, 160, 89, 0.25); }");
             out.println("button:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(197, 160, 89, 0.45); }");
             out.println(".filter-box { background: #111; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #333; }");
@@ -99,60 +133,69 @@ public class HomeServlet extends HttpServlet {
             out.println(".btn-admin-access { position: absolute; top: 12px; right: 15px; color: #888; font-size: 11px; text-decoration: none; border: 1px solid #444; padding: 4px 8px; border-radius: 4px; transition: all 0.3s ease; }");
             out.println(".btn-admin-access:hover { color: #000; border-color: #c5a059; background: #c5a059; box-shadow: 0 0 10px rgba(197, 160, 89, 0.4); }");
             out.println("</style>");
-            // --- FIN DE NUEVOS ESTILOS ---
 
             out.println("</head>");
             out.println("<body>");
 
             out.println("<form action='ReservarTurnoServlet' method='POST' id='bookingForm' class='main-wrapper'>");
             out.println("<input type='hidden' id='hora' name='hora' required>");
+            out.println("<input type='hidden' id='barbero' name='barbero' value='" + barberoFiltro + "' required>");
 
             // PRIMERA TARJETA: FORMULARIO
             out.println("<div class='card'>");
-            
-            // Botón de acceso al Panel de Administración
             out.println("<a href='AdminServlet' class='btn-admin-access'>⚙️ Admin</a>");
-
             out.println("<div class='header-logo'><img src='images/logo.jpg' alt='Monsprat Barber Studio Logo'></div>");
             out.println("<h2>Reserva de Turno</h2>");
 
             out.println("<div class='form-group'>");
             out.println("<label for='cliente'>Nombre Completo</label>");
-            out.println("<input type='text' id='cliente' name='cliente' required placeholder='Ej. Carlos Mendoza'>");
+            out.println("<input type='text' id='cliente' name='cliente' value='" + clientePrevio + "' required placeholder='Ej. Carlos Mendoza'>");
             out.println("</div>");
 
             out.println("<div class='form-group'>");
             out.println("<label for='telefono'>Número de WhatsApp</label>");
-            out.println("<input type='tel' id='telefono' name='telefono' required placeholder='Ej. 3001234567'>");
+            out.println("<input type='tel' id='telefono' name='telefono' value='" + telefonoPrevio + "' required placeholder='Ej. 3001234567'>");
             out.println("</div>");
 
             out.println("<div class='form-group'>");
-            out.println("<label for='servicio'>Servicio</label>");
-            out.println("<select id='servicio' name='servicio' required>");
-            out.println("<option value='' disabled selected>-- Selecciona un servicio --</option>");
-            
-            out.println("<optgroup label='Cortes y Barba'>");
-            out.println("<option value='Corte de Cabello'>Corte de Cabello</option>");
-            out.println("<option value='Arreglo de Barba'>Arreglo de Barba</option>");
-            out.println("<option value='Corte + Barba'>Corte + Barba</option>");
-            out.println("<option value='Pigmentación de Barba'>Pigmentación de Barba</option>");
-            out.println("</optgroup>");
-            
-            out.println("<optgroup label='Color'>");
-            out.println("<option value='Tintura / Color'>Tintura / Color</option>");
-            out.println("</optgroup>");
-            
-            out.println("<optgroup label='Facial y Depilación'>");
-            out.println("<option value='Arreglo de Cejas'>Arreglo de Cejas</option>");
-            out.println("<option value='Depilación de Nariz'>Depilación de Nariz</option>");
-            out.println("<option value='Depilación de Oídos'>Depilación de Oídos</option>");
-            out.println("<option value='Mascarilla Puntos Negros'>Mascarilla Puntos Negros</option>");
-            out.println("<option value='Mascarilla de Colágeno'>Mascarilla de Colágeno</option>");
-            out.println("<option value='Exfoliación Facial'>Exfoliación Facial</option>");
-            out.println("<option value='Mascarilla Oro'>Mascarilla Oro</option>");
-            out.println("</optgroup>");
+            out.println("<label>Elige tu Barbero</label>");
+            out.println("<div class='barber-grid'>");
+            boolean esSantiago = barberoFiltro.equals("Santiago Monsalve");
+            out.println("<div class='barber-card " + (esSantiago ? "selected" : "") + "' onclick=\"seleccionarBarbero('Santiago Monsalve', this)\">");
+            out.println("<img src='images/santiago.jpg' alt='Santiago Monsalve' class='barber-avatar' onerror=\"this.src='images/logo.jpg'\">");
+            out.println("<span class='barber-name'>Santiago Monsalve</span>");
+            out.println("<div class='barber-meta'>");
+            out.println("<span class='barber-badge'>Barbero</span>");
+            out.println("<span class='barber-rating'>★ 5.0</span>");
+            out.println("</div>");
+            out.println("</div>");
+            out.println("</div>");
+            out.println("</div>");
 
-            out.println("</select>");
+            // LISTA MULTI-SELECCIÓN DE SERVICIOS
+            out.println("<div class='form-group'>");
+            out.println("<label>Servicios (Puedes elegir varios)</label>");
+            out.println("<div class='services-container'>");
+
+            out.println("<div class='service-category'>Cortes y Barba</div>");
+            imprimirCheckbox(out, "Corte de Cabello", serviciosPrevios);
+            imprimirCheckbox(out, "Arreglo de Barba", serviciosPrevios);
+            imprimirCheckbox(out, "Corte + Barba", serviciosPrevios);
+            imprimirCheckbox(out, "Pigmentación de Barba", serviciosPrevios);
+
+            out.println("<div class='service-category'>Color</div>");
+            imprimirCheckbox(out, "Tintura / Color", serviciosPrevios);
+
+            out.println("<div class='service-category'>Facial y Depilación</div>");
+            imprimirCheckbox(out, "Arreglo de Cejas", serviciosPrevios);
+            imprimirCheckbox(out, "Depilación de Nariz", serviciosPrevios);
+            imprimirCheckbox(out, "Depilación de Oídos", serviciosPrevios);
+            imprimirCheckbox(out, "Mascarilla Puntos Negros", serviciosPrevios);
+            imprimirCheckbox(out, "Mascarilla de Colágeno", serviciosPrevios);
+            imprimirCheckbox(out, "Exfoliación Facial", serviciosPrevios);
+            imprimirCheckbox(out, "Mascarilla Oro", serviciosPrevios);
+
+            out.println("</div>"); // .services-container
             out.println("</div>");
 
             out.println("<div class='form-group'>");
@@ -166,8 +209,8 @@ public class HomeServlet extends HttpServlet {
             out.println("<h2>Disponibilidad en Tiempo Real</h2>");
 
             out.println("<div class='filter-box'>");
-            out.println("<label for='fechaFiltroInput'>Fecha seleccionada:</label>");
-            out.println("<input type='text' id='fechaFiltroInput' value='" + fechaFiltro + "' readonly>");
+            out.println("<label for='fechaFiltroInput'>Filtro actual:</label>");
+            out.println("<input type='text' id='fechaFiltroInput' value='" + fechaFiltro + " (" + barberoFiltro + ")' readonly>");
             out.println("</div>");
 
             out.println("<label>Selecciona tu franja horaria:</label>");
@@ -194,6 +237,65 @@ public class HomeServlet extends HttpServlet {
             out.println("<script src='https://cdn.jsdelivr.net/npm/flatpickr'></script>");
             out.println("<script src='https://npmcdn.com/flatpickr/dist/l10n/es.js'></script>");
             out.println("<script>");
+
+            // LÓGICA DE EXCLUSIÓN MUTUA DE SERVICIOS
+            out.println("function validarExclusionServicios() {");
+            out.println("  const chkCorte = document.querySelector(\"input[name='servicio'][value='Corte de Cabello']\");");
+            out.println("  const chkBarba = document.querySelector(\"input[name='servicio'][value='Arreglo de Barba']\");");
+            out.println("  const chkCombo = document.querySelector(\"input[name='servicio'][value='Corte + Barba']\");");
+
+            // Regla: Si selecciona Corte o Barba, se bloquea Corte + Barba
+            out.println("  if (chkCorte.checked || chkBarba.checked) {");
+            out.println("    chkCombo.disabled = true;");
+            out.println("    chkCombo.checked = false;");
+            out.println("    chkCombo.parentElement.classList.add('disabled-option');");
+            out.println("  } else {");
+            out.println("    chkCombo.disabled = false;");
+            out.println("    chkCombo.parentElement.classList.remove('disabled-option');");
+            out.println("  }");
+
+            // Regla: Si selecciona Corte + Barba, se bloquean Corte y Barba
+            out.println("  if (chkCombo.checked) {");
+            out.println("    chkCorte.disabled = true; chkCorte.checked = false;");
+            out.println("    chkBarba.disabled = true; chkBarba.checked = false;");
+            out.println("    chkCorte.parentElement.classList.add('disabled-option');");
+            out.println("    chkBarba.parentElement.classList.add('disabled-option');");
+            out.println("  } else if (!chkCorte.checked && !chkBarba.checked) {");
+            out.println("    chkCorte.disabled = false;");
+            out.println("    chkBarba.disabled = false;");
+            out.println("    chkCorte.parentElement.classList.remove('disabled-option');");
+            out.println("    chkBarba.parentElement.classList.remove('disabled-option');");
+            out.println("  }");
+            out.println("}");
+
+            out.println("document.querySelectorAll(\"input[name='servicio']\").forEach(chk => {");
+            out.println("  chk.addEventListener('change', validarExclusionServicios);");
+            out.println("});");
+            out.println("validarExclusionServicios();");
+
+            out.println("function obtenerServiciosSeleccionados() {");
+            out.println("  const marcados = Array.from(document.querySelectorAll(\"input[name='servicio']:checked\")).map(c => c.value);");
+            out.println("  return encodeURIComponent(marcados.join(','));");
+            out.println("}");
+
+            out.println("function actualizarDisponibilidad(nuevaFecha = null, nuevoBarbero = null) {");
+            out.println("  const barbero = nuevoBarbero || document.getElementById('barbero').value;");
+            out.println("  const fecha = nuevaFecha || document.getElementById('fecha').value;");
+            out.println("  const cliente = encodeURIComponent(document.getElementById('cliente').value);");
+            out.println("  const telefono = encodeURIComponent(document.getElementById('telefono').value);");
+            out.println("  const servicio = obtenerServiciosSeleccionados();");
+            out.println("  if (fecha) {");
+            out.println("    window.location.href = 'HomeServlet?fechaFiltro=' + fecha + '&barberoFiltro=' + encodeURIComponent(barbero) + '&cliente=' + cliente + '&telefono=' + telefono + '&servicio=' + servicio;");
+            out.println("  }");
+            out.println("}");
+
+            out.println("function seleccionarBarbero(nombreBarbero, elemento) {");
+            out.println("  document.querySelectorAll('.barber-card').forEach(c => c.classList.remove('selected'));");
+            out.println("  elemento.classList.add('selected');");
+            out.println("  document.getElementById('barbero').value = nombreBarbero;");
+            out.println("  actualizarDisponibilidad(null, nombreBarbero);");
+            out.println("}");
+
             out.println("const festivosColombia = ['2026-01-01','2026-01-12','2026-03-23','2026-04-02','2026-04-03','2026-05-01','2026-05-18','2026-06-08','2026-06-15','2026-06-29','2026-07-20','2026-08-07','2026-08-17','2026-10-12','2026-11-02','2026-11-16','2026-12-08','2026-12-25'];");
             out.println("const inputFecha = document.getElementById('fecha');");
             out.println("const inputHora = document.getElementById('hora');");
@@ -210,7 +312,7 @@ public class HomeServlet extends HttpServlet {
             out.println("    return esDomingo || festivosColombia.includes(`${year}-${month}-${day}`);");
             out.println("  }],");
             out.println("  onChange: function(selectedDates, dateStr) {");
-            out.println("    if (dateStr) { window.location.href = 'HomeServlet?fechaFiltro=' + dateStr; }");
+            out.println("    actualizarDisponibilidad(dateStr);");
             out.println("  }");
             out.println("});");
 
@@ -223,6 +325,8 @@ public class HomeServlet extends HttpServlet {
             out.println("});");
 
             out.println("document.getElementById('bookingForm').addEventListener('submit', function(e) {");
+            out.println("  const serviciosMarcados = document.querySelectorAll(\"input[name='servicio']:checked\");");
+            out.println("  if (serviciosMarcados.length === 0) { alert('Por favor, selecciona al menos un servicio.'); e.preventDefault(); return; }");
             out.println("  if (!inputTel.value.trim()) { alert('Por favor, ingresa tu número de WhatsApp.'); e.preventDefault(); return; }");
             out.println("  if (!inputFecha.value) { alert('Por favor, selecciona una fecha.'); e.preventDefault(); return; }");
             out.println("  if (!inputHora.value) { alert('Por favor, selecciona una franja horaria haciendo clic en uno de los bloques.'); e.preventDefault(); return; }");
@@ -234,13 +338,21 @@ public class HomeServlet extends HttpServlet {
         }
     }
 
+    private void imprimirCheckbox(PrintWriter out, String nombreServicio, List<String> serviciosPrevios) {
+        boolean checked = serviciosPrevios.contains(nombreServicio);
+        out.println("<label class='checkbox-label'>");
+        out.println("<input type='checkbox' name='servicio' value='" + nombreServicio + "' " + (checked ? "checked" : "") + ">");
+        out.println("<span>" + nombreServicio + "</span>");
+        out.println("</label>");
+    }
+
     private String formatearRangoHora(String hora24) {
         switch (hora24) {
             case "10:00": return "10:00 AM - 11:00 AM";
             case "11:00": return "11:00 AM - 12:00 PM";
             case "12:00": return "12:00 PM - 01:00 PM";
             case "13:00": return "01:00 PM - 02:00 PM";
-            case "14:00": return "02:00 PM - 03:00 PM";
+            case "14:00": return "14:00 PM - 03:00 PM";
             case "15:00": return "03:00 PM - 04:00 PM";
             case "16:00": return "04:00 PM - 05:00 PM";
             case "17:00": return "05:00 PM - 06:00 PM";
