@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 @WebServlet("/ReservarTurnoServlet")
 public class ReservarTurnoServlet extends HttpServlet {
@@ -45,7 +46,7 @@ public class ReservarTurnoServlet extends HttpServlet {
         
         if (barbero == null || barbero.trim().isEmpty()){
              barbero = "Santiago Monsalve";
-            }
+        }
 
         String[] serviciosSeleccionados = request.getParameterValues("servicio");
         String servicio = (serviciosSeleccionados != null && serviciosSeleccionados.length > 0)
@@ -76,18 +77,27 @@ public class ReservarTurnoServlet extends HttpServlet {
             esFechaInvalida = true;
         }
 
+        // Obtener la referencia a ServletContext y la lista compartida de manera segura
         ServletContext context = getServletContext();
-        List<Turno> listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
-        if (listaTurnos == null) {
-            listaTurnos = new ArrayList<>();
+        List<Turno> listaTurnos;
+        
+        synchronized (context) {
+            listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
+            if (listaTurnos == null) {
+                listaTurnos = new ArrayList<>();
+                context.setAttribute("listaTurnos", listaTurnos);
+            }
         }
 
         boolean yaOcupado = false;
         if (!esFechaInvalida && !esDomingoOFestivo) {
-            for (Turno t : listaTurnos) {
-                if (t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
-                    yaOcupado = true;
-                    break;
+            synchronized (listaTurnos) {
+                for (Turno t : listaTurnos) {
+                    if (t.getFecha() != null && t.getHora() != null 
+                            && t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
+                        yaOcupado = true;
+                        break;
+                    }
                 }
             }
         }
@@ -131,9 +141,19 @@ public class ReservarTurnoServlet extends HttpServlet {
                 out.println("<p style='color: #e0e0e0; font-size: 14px;'>El horario seleccionado (<strong>" + hora + "</strong>) ya ha sido reservado para la fecha <strong>" + fecha + "</strong>.</p>");
                 out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Seleccionar Otro Horario</a>");
             } else {
-                Turno nuevoTurno = new Turno(cliente, "N/A", telefono, servicio, fecha, hora);
-                listaTurnos.add(nuevoTurno);
-                context.setAttribute("listaTurnos", listaTurnos);
+                // Instanciar nuevo Turno y asegurar la asignación del ID único para el Admin
+                Turno nuevoTurno = new Turno();
+                nuevoTurno.setId(UUID.randomUUID().toString());
+                nuevoTurno.setCliente(cliente);
+                nuevoTurno.setBarbero(barbero);
+                nuevoTurno.setTelefono(telefono);
+                nuevoTurno.setServicio(servicio);
+                nuevoTurno.setFecha(fecha);
+                nuevoTurno.setHora(hora);
+
+                synchronized (listaTurnos) {
+                    listaTurnos.add(nuevoTurno);
+                }
 
                 // Limpiar teléfono y asegurar indicativo de Colombia (57)
                 String telefonoLimpio = (telefono != null) ? telefono.replaceAll("[^0-9]", "") : "";

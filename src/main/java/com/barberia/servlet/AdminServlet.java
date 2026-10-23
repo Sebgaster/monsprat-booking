@@ -175,10 +175,11 @@ public class AdminServlet extends HttpServlet {
             case "13:00": return "01:00 PM - 02:00 PM";
             case "14:00": return "02:00 PM - 03:00 PM";
             case "15:00": return "03:00 PM - 04:00 PM";
-            case "16:00": return "16:00 PM - 05:00 PM";
+            case "16:00": return "04:00 PM - 05:00 PM";
             case "17:00": return "05:00 PM - 06:00 PM";
             case "18:00": return "06:00 PM - 07:00 PM";
             case "19:00": return "07:00 PM - 08:00 PM";
+            case "20:00": return "08:00 PM - 09:00 PM";
             default: return hora24;
         }
     }
