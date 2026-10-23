@@ -1,9 +1,0 @@
-com\barberia\model\Turno.class
-com\barberia\servlet\LogoutAdminServlet.class
-com\barberia\servlet\LoginAdminServlet.class
-com\barberia\servlet\ReservarTurnoServlet.class
-com\mycompany\javaweb\resources\JakartaEE11Resource.class
-com\barberia\servlet\AdminServlet.class
-com\barberia\servlet\HomeServlet.class
-com\mycompany\javaweb\JakartaRestConfiguration.class
-com\barberia\servlet\CancelarTurnoServlet.class
