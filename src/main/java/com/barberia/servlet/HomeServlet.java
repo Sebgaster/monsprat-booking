@@ -352,7 +352,7 @@ public class HomeServlet extends HttpServlet {
             case "11:00": return "11:00 AM - 12:00 PM";
             case "12:00": return "12:00 PM - 01:00 PM";
             case "13:00": return "01:00 PM - 02:00 PM";
-            case "14:00": return "14:00 PM - 03:00 PM";
+            case "14:00": return "02:00 PM - 03:00 PM";
             case "15:00": return "03:00 PM - 04:00 PM";
             case "16:00": return "04:00 PM - 05:00 PM";
             case "17:00": return "05:00 PM - 06:00 PM";
