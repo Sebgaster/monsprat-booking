@@ -4,8 +4,7 @@
  */
 package com.barberia.servlet;
 
-import com.barberia.model.Turno;
-import jakarta.servlet.ServletContext;
+import com.barberia.dao.TurnoDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,7 +13,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
 import java.io.IOException;
-import java.util.List;
 
 @WebServlet("/CancelarTurnoServlet")
 public class CancelarTurnoServlet extends HttpServlet {
@@ -34,14 +32,10 @@ public class CancelarTurnoServlet extends HttpServlet {
         String turnoId = request.getParameter("turnoId");
         String fechaFiltro = request.getParameter("fechaFiltro");
 
+        // 3. Eliminar el turno directamente en PostgreSQL (Render)
         if (turnoId != null && !turnoId.isEmpty()) {
-            ServletContext context = getServletContext();
-            List<Turno> listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
-
-            if (listaTurnos != null) {
-                // 3. Remover el turno coincidente por ID
-                listaTurnos.removeIf(t -> turnoId.equals(t.getId()));
-            }
+            TurnoDAO turnoDAO = new TurnoDAO();
+            turnoDAO.eliminarTurno(turnoId);
         }
 
         // 4. Redirigir al panel conservando la fecha consultada

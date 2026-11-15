@@ -4,8 +4,8 @@
  */
 package com.barberia.servlet;
 
+import com.barberia.dao.TurnoDAO;
 import com.barberia.model.Turno;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,7 +17,6 @@ import java.io.PrintWriter;
 import java.net.URLEncoder;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -44,8 +43,8 @@ public class ReservarTurnoServlet extends HttpServlet {
         String telefono = request.getParameter("telefono");
         String barbero = request.getParameter("barbero");
         
-        if (barbero == null || barbero.trim().isEmpty()){
-             barbero = "Santiago Monsalve";
+        if (barbero == null || barbero.trim().isEmpty()) {
+            barbero = "Santiago Monsalve";
         }
 
         String[] serviciosSeleccionados = request.getParameterValues("servicio");
@@ -77,27 +76,17 @@ public class ReservarTurnoServlet extends HttpServlet {
             esFechaInvalida = true;
         }
 
-        // Obtener la referencia a ServletContext y la lista compartida de manera segura
-        ServletContext context = getServletContext();
-        List<Turno> listaTurnos;
-        
-        synchronized (context) {
-            listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
-            if (listaTurnos == null) {
-                listaTurnos = new ArrayList<>();
-                context.setAttribute("listaTurnos", listaTurnos);
-            }
-        }
-
+        // Consultar turnos reales desde PostgreSQL (Render)
+        TurnoDAO turnoDAO = new TurnoDAO();
         boolean yaOcupado = false;
+
         if (!esFechaInvalida && !esDomingoOFestivo) {
-            synchronized (listaTurnos) {
-                for (Turno t : listaTurnos) {
-                    if (t.getFecha() != null && t.getHora() != null 
-                            && t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
-                        yaOcupado = true;
-                        break;
-                    }
+            List<Turno> listaTurnos = turnoDAO.listarTurnos();
+            for (Turno t : listaTurnos) {
+                if (t.getFecha() != null && t.getHora() != null 
+                        && t.getFecha().equals(fecha) && t.getHora().equals(hora)) {
+                    yaOcupado = true;
+                    break;
                 }
             }
         }
@@ -141,7 +130,7 @@ public class ReservarTurnoServlet extends HttpServlet {
                 out.println("<p style='color: #e0e0e0; font-size: 14px;'>El horario seleccionado (<strong>" + hora + "</strong>) ya ha sido reservado para la fecha <strong>" + fecha + "</strong>.</p>");
                 out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Seleccionar Otro Horario</a>");
             } else {
-                // Instanciar nuevo Turno y asegurar la asignación del ID único para el Admin
+                // Instanciar nuevo Turno y guardarlo en PostgreSQL de Render
                 Turno nuevoTurno = new Turno();
                 nuevoTurno.setId(UUID.randomUUID().toString());
                 nuevoTurno.setCliente(cliente);
@@ -151,39 +140,43 @@ public class ReservarTurnoServlet extends HttpServlet {
                 nuevoTurno.setFecha(fecha);
                 nuevoTurno.setHora(hora);
 
-                synchronized (listaTurnos) {
-                    listaTurnos.add(nuevoTurno);
+                boolean guardadoEnBD = turnoDAO.guardarTurno(nuevoTurno);
+
+                if (guardadoEnBD) {
+                    // Limpiar teléfono y asegurar indicativo de Colombia (57)
+                    String telefonoLimpio = (telefono != null) ? telefono.replaceAll("[^0-9]", "") : "";
+                    if (telefonoLimpio.length() == 10) {
+                        telefonoLimpio = "57" + telefonoLimpio;
+                    }
+
+                    // Formatear mensaje para WhatsApp
+                    String mensajeTexto = "💈 *Confirmación de Reserva - Monsprat Barber Studio*\n\n"
+                            + "Hola " + cliente + ", aquí tienes el comprobante de tu cita:\n"
+                            + "📅 *Fecha:* " + fecha + "\n"
+                            + "⏰ *Hora:* " + hora + "\n"
+                            + "✂️ *Servicio:* " + servicio + "\n\n"
+                            + "¡Te esperamos!";
+
+                    String urlWhatsAppCliente = "https://wa.me/" + telefonoLimpio + "?text=" + URLEncoder.encode(mensajeTexto, "UTF-8");
+
+                    out.println("<h2>Reserva Confirmada</h2>");
+                    out.println("<p style='color: #2ecc71; font-size: 15px; font-weight: 500;'>¡Tu turno ha sido agendado con éxito!</p>");
+
+                    out.println("<div class='info-group'>");
+                    out.println("<p><strong>Cliente:</strong> " + cliente + "</p>");
+                    out.println("<p><strong>WhatsApp:</strong> " + telefono + "</p>");
+                    out.println("<p><strong>Servicio:</strong> " + servicio + "</p>");
+                    out.println("<p><strong>Fecha:</strong> " + fecha + "</p>");
+                    out.println("<p><strong>Hora:</strong> " + hora + "</p>");
+                    out.println("</div>");
+
+                    out.println("<a href='" + urlWhatsAppCliente + "' target='_blank' class='btn btn-wsp'>📱 Recibir comprobante en WhatsApp</a>");
+                    out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Volver al Inicio</a>");
+                } else {
+                    out.println("<h2 style='color: #e74c3c;'>Error de Conexión</h2>");
+                    out.println("<p style='color: #e0e0e0; font-size: 14px;'>No se pudo guardar la reserva en la base de datos. Revisa la conexión a Render e intenta nuevamente.</p>");
+                    out.println("<a href='HomeServlet' class='btn btn-home'>Volver al Inicio</a>");
                 }
-
-                // Limpiar teléfono y asegurar indicativo de Colombia (57)
-                String telefonoLimpio = (telefono != null) ? telefono.replaceAll("[^0-9]", "") : "";
-                if (telefonoLimpio.length() == 10) {
-                    telefonoLimpio = "57" + telefonoLimpio;
-                }
-
-                // Formatear mensaje para WhatsApp
-                String mensajeTexto = "💈 *Confirmación de Reserva - Monsprat Barber Studio*\n\n"
-                        + "Hola " + cliente + ", aquí tienes el comprobante de tu cita:\n"
-                        + "📅 *Fecha:* " + fecha + "\n"
-                        + "⏰ *Hora:* " + hora + "\n"
-                        + "✂️ *Servicio:* " + servicio + "\n\n"
-                        + "¡Te esperamos!";
-
-                String urlWhatsAppCliente = "https://wa.me/" + telefonoLimpio + "?text=" + URLEncoder.encode(mensajeTexto, "UTF-8");
-
-                out.println("<h2>Reserva Confirmada</h2>");
-                out.println("<p style='color: #2ecc71; font-size: 15px; font-weight: 500;'>¡Tu turno ha sido agendado con éxito!</p>");
-
-                out.println("<div class='info-group'>");
-                out.println("<p><strong>Cliente:</strong> " + cliente + "</p>");
-                out.println("<p><strong>WhatsApp:</strong> " + telefono + "</p>");
-                out.println("<p><strong>Servicio:</strong> " + servicio + "</p>");
-                out.println("<p><strong>Fecha:</strong> " + fecha + "</p>");
-                out.println("<p><strong>Hora:</strong> " + hora + "</p>");
-                out.println("</div>");
-
-                out.println("<a href='" + urlWhatsAppCliente + "' target='_blank' class='btn btn-wsp'>📱 Recibir comprobante en WhatsApp</a>");
-                out.println("<a href='HomeServlet?fechaFiltro=" + fecha + "' class='btn btn-home'>Volver al Inicio</a>");
             }
 
             out.println("</div>");

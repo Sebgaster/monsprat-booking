@@ -15,7 +15,7 @@ public class Turno {
         this.id = UUID.randomUUID().toString(); 
     }
 
-    public Turno(String cliente, String telefono, String servicio, String fecha, String hora, String barbero) {
+    public Turno(String id,String cliente, String telefono, String servicio, String fecha, String hora, String barbero) {
         this.id = UUID.randomUUID().toString();
         this.cliente = cliente;
         this.telefono = telefono;

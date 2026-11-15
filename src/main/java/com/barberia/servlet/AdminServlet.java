@@ -4,8 +4,8 @@
  */
 package com.barberia.servlet;
 
+import com.barberia.dao.TurnoDAO;
 import com.barberia.model.Turno;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -16,7 +16,6 @@ import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/AdminServlet")
@@ -41,12 +40,9 @@ public class AdminServlet extends HttpServlet {
             fechaFiltro = LocalDate.now().toString();
         }
 
-        // 3. Recuperar Turnos de la Memoria (ServletContext)
-        ServletContext context = getServletContext();
-        List<Turno> listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
-        if (listaTurnos == null) {
-            listaTurnos = new ArrayList<>();
-        }
+        // 3. Recuperar Turnos desde PostgreSQL en Render
+        TurnoDAO turnoDAO = new TurnoDAO();
+        List<Turno> listaTurnos = turnoDAO.listarTurnos();
 
         // 4. Renderizar Interfaz HTML
         try (PrintWriter out = response.getWriter()) {
@@ -98,7 +94,7 @@ public class AdminServlet extends HttpServlet {
             // Herramientas y Filtro
             int totalCitasHoy = 0;
             for (Turno t : listaTurnos) {
-                if (t.getFecha().equals(fechaFiltro)) {
+                if (t.getFecha() != null && t.getFecha().equals(fechaFiltro)) {
                     totalCitasHoy++;
                 }
             }
@@ -126,7 +122,7 @@ public class AdminServlet extends HttpServlet {
 
             int contador = 0;
             for (Turno t : listaTurnos) {
-                if (t.getFecha().equals(fechaFiltro)) {
+                if (t.getFecha() != null && t.getFecha().equals(fechaFiltro)) {
                     contador++;
                     String telefonoLimpio = t.getTelefono() != null ? t.getTelefono().replaceAll("[^0-9]", "") : "";
                     if (telefonoLimpio.length() == 10) {

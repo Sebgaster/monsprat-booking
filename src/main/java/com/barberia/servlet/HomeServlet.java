@@ -4,8 +4,8 @@
  */
 package com.barberia.servlet;
 
+import com.barberia.dao.TurnoDAO;
 import com.barberia.model.Turno;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -58,11 +58,9 @@ public class HomeServlet extends HttpServlet {
             serviciosPrevios = Arrays.asList(serviciosPreviosStr.split(","));
         }
 
-        ServletContext context = getServletContext();
-        List<Turno> listaTurnos = (List<Turno>) context.getAttribute("listaTurnos");
-        if (listaTurnos == null) {
-            listaTurnos = new ArrayList<>();
-        }
+        // Consultar turnos reales desde PostgreSQL (Render)
+        TurnoDAO turnoDAO = new TurnoDAO();
+        List<Turno> listaTurnos = turnoDAO.listarTurnos();
 
         List<String> horasBase = Arrays.asList(
             "10:00", "11:00", "12:00", "13:00", 
@@ -71,7 +69,8 @@ public class HomeServlet extends HttpServlet {
 
         List<String> horasOcupadas = new ArrayList<>();
         for (Turno t : listaTurnos) {
-            if (t.getFecha().equals(fechaFiltro) && t.getBarbero() != null && t.getBarbero().equals(barberoFiltro)) {
+            if (t.getFecha() != null && t.getFecha().equals(fechaFiltro) 
+                    && t.getBarbero() != null && t.getBarbero().equals(barberoFiltro)) {
                 horasOcupadas.add(t.getHora());
             }
         }
