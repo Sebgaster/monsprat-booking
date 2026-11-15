@@ -11,12 +11,11 @@ import java.sql.Statement;
 
 public class ConexionDB {
 
-    // Reemplaza HOST, BASE_DE_DATOS y CONTRASEÑA con los de tu External Database URL de Render
-    private static final String URL  = "jdbc:postgresql://dpg-dbe013hsrm7s73d6kp10-a.TU_REGION-postgres.render.com:5432/TU_BASE_DE_DATOS?sslmode=require";
+    private static final String URL  = "jdbc:postgresql://dpg-dbe013hsrm7s73d6kp10-a.ohio-postgres.render.com:5432/monsprat_db?sslmode=require";
     private static final String USER = "monsprat_user";
-    private static final String PASS = "TU_CONTRASEÑA_DE_RENDER";
+    private static final String PASS = "RKt1dk9Z5EzM35Qf3QjsnGXCvcrkSYwr";
 
-    // Crea la tabla 'turnos' automáticamente en Render al iniciar
+    // Crea la tabla 'turnos' automáticamente en Render la primera vez que se conecta
     static {
         String sql = "CREATE TABLE IF NOT EXISTS turnos ("
                    + "id VARCHAR(36) PRIMARY KEY, "
