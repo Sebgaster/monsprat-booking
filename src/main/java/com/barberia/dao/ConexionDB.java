@@ -31,7 +31,7 @@ public class ConexionDB {
             System.out.println("CONEXION EXITOSA A RENDER Y TABLA 'turnos' LISTA.");
         } catch (SQLException e) {
             System.err.println("ERROR CONECTANDO A RENDER: " + e.getMessage());
-            e.printStackTrace();
+          
         }
     }
 
