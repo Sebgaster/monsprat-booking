@@ -61,9 +61,12 @@ public class TurnoDAO {
         try (Connection conn = ConexionDB.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            ps.setString(1, id);
-            return ps.executeUpdate() > 0;
+            ps.setString(1, id.trim());
+            int filas = ps.executeUpdate();
+            System.out.println(">>> INTENTO DE BORRADO ID: [" + id + "] | FILAS BORRADAS: " + filas);
+            return filas > 0;
         } catch (SQLException e) {
+            System.err.println(">>> ERROR SQL AL BORRAR: " + e.getMessage());
             e.printStackTrace();
             return false;
         }
